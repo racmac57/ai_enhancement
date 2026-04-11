@@ -34,9 +34,17 @@ Check `$ARGUMENTS`:
 
 ### Step 2 - Capture the conversation
 
-Reconstruct the full conversation from your context window. Write it to a
-temporary file in the system temp directory (`$TMPDIR` on macOS/Linux,
-`$TEMP` on Windows) with the name `chat_session_<timestamp>.txt`.
+Reconstruct the full conversation from your context window. First resolve
+the real system temp directory by running:
+
+```bash
+python -c "import tempfile; print(tempfile.gettempdir())"
+```
+
+Write the conversation to `<temp_dir>/chat_session_<timestamp>.txt`.
+**Do NOT use `/tmp` directly** — on Windows with Git Bash, `/tmp` is a
+virtual path that does not exist on the real filesystem. Always use the
+path returned by Python's `tempfile.gettempdir()`.
 
 Format rules:
 - Every turn on its own line block prefixed with the role:
@@ -62,8 +70,12 @@ Execute the standalone chunker script. It has zero external dependencies
 (stdlib only).
 
 ```bash
-python3 "$HOME/.claude/scripts/chat_chunker.py" "<input_file>"
+python "C:\Users\carucci_r\.claude\scripts\chat_chunker.py" "<input_file>"
 ```
+
+> **Windows note:** Use `python` not `python3` — Windows does not register
+> a `python3` command by default. Use the full path to `chat_chunker.py`
+> to avoid shell path resolution issues with `$HOME`.
 
 The script defaults to `KB_Shared/04_output` on OneDrive. To override,
 pass an explicit output directory as the second argument.
