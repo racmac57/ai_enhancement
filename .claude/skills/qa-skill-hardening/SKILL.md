@@ -2,7 +2,7 @@
 name: qa-skill-hardening
 description: Multi-agent QA swarm that auto-discovers, tests, fixes, and hardens project skills/scripts. Use when you want to validate, harden, or audit any set of skills or automation scripts in any project.
 argument-hint: "[target-directory-or-skill-name] (optional, defaults to auto-discover)"
-allowed-tools: Bash Read Edit Write Glob Grep Agent TodoWrite
+allowed-tools: Bash Read Edit Write Glob Grep Agent TaskCreate TaskUpdate
 effort: max
 ---
 
@@ -66,13 +66,28 @@ Search for skills/scripts using these discovery strategies (try all, collect res
 **/*automation*.md
 
 # Strategy 4: Executable scripts
-**/*.sh (check for chmod +x)
+**/*.sh
 **/Makefile
 **/Justfile
 **/Taskfile.yml
 ```
 
 If `$ARGUMENTS` is provided and non-empty, narrow discovery to only that directory or matching skill name.
+
+### Self-Referential Guard
+
+If the QA skill discovers **itself** (`qa-skill-hardening`) as a target during auto-discovery, it MUST:
+- Test itself using the 9-step framework like any other skill
+- But NEVER invoke itself recursively (do not call `/qa-skill-hardening` to test `qa-skill-hardening`)
+- Instead, validate the SKILL.md file directly via static analysis (frontmatter parsing, path checks, rule compliance)
+
+### Empty Discovery Guard
+
+If discovery finds **zero** testable skills/scripts:
+- Log: "Discovery complete — no skills or scripts found in [project root]"
+- Skip Phases 1–4
+- Generate a minimal Phase 5 report with `Total Skills: 0` and status: `NO_TARGETS`
+- Do NOT treat empty discovery as an error
 
 ### Step 0.4 — Classify Each Skill
 
@@ -85,7 +100,7 @@ For every discovered skill/script, determine:
 
 ### Step 0.5 — Build the Source Material
 
-Synthesize all discovery into a structured inventory. Record it in `docs/SKILL_HARDENING_MASTER.md`.
+Synthesize all discovery into a structured inventory. Record it in `docs/skill_memory/SKILL_HARDENING_MASTER.md`.
 
 ---
 
@@ -183,7 +198,7 @@ For each skill, ensure `docs/skill_memory/<Skill_Name>_MEMORY.md` contains:
 
 ### 5.2 — Update Master Tracker
 
-Update `docs/SKILL_HARDENING_MASTER.md` with:
+Update `docs/skill_memory/SKILL_HARDENING_MASTER.md` with:
 - Global status table (all skills, all 9 tests)
 - Shared lessons learned
 - Cross-skill dependency map
@@ -191,7 +206,7 @@ Update `docs/SKILL_HARDENING_MASTER.md` with:
 
 ### 5.3 — Generate Final Report
 
-Create `docs/FINAL_SKILL_HARDENING_REPORT.md`:
+Create `docs/skill_memory/FINAL_SKILL_HARDENING_REPORT.md`:
 
 ```markdown
 # FINAL SKILL HARDENING REPORT
@@ -237,6 +252,7 @@ Create `docs/FINAL_SKILL_HARDENING_REPORT.md`:
 - Never commit a regression (a test that was PASS going to FAIL)
 - Use descriptive commit messages: `fix(skill-hardening): [skill-name] - [what was fixed]`
 - After all hardening is complete, make a final commit with the full report
+- **NEVER push to remote** — leave pushing to the user. The skill only commits locally.
 
 ### Commit Log
 Maintain `docs/skill_memory/GIT_COMMIT_LOG.md` with every commit hash and summary.
@@ -261,7 +277,7 @@ PHASE 4: Regression Test (full suite)
     |
 PHASE 5: Document & Report
     |
-PHASE 6: Commit & Push
+PHASE 6: Commit (local only — do NOT push)
 ```
 
 **Begin PHASE 0 now. Do not wait for user input unless a true hard blocker prevents all forward progress.**
