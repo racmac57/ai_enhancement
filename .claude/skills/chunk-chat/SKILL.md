@@ -41,12 +41,20 @@ the real system temp directory by running:
 python -c "import tempfile; print(tempfile.gettempdir())"
 ```
 
-Write the conversation to `<temp_dir>/chat_session_<timestamp>.txt`.
+Next, derive a meaningful filename using the AI Suffix Naming Convention
+(see section below). If `$ARGUMENTS` contains a topic label, use it.
+Otherwise generate a 4–8 word Title_Case topic that describes this
+conversation, then append `_Claude`.
+
+Name the temp file: `<temp_dir>/<Topic_Description>_Claude.txt`
+
+Example: `C:\Users\carucci_r\AppData\Local\Temp\Chunk_Chat_Skill_Update_And_Hardening_Claude.txt`
+
 **Do NOT use `/tmp` directly** — on Windows with Git Bash, `/tmp` is a
 virtual path that does not exist on the real filesystem. Always use the
 path returned by Python's `tempfile.gettempdir()`.
 
-Format rules:
+Write the conversation to that file. Format rules:
 - Every turn on its own line block prefixed with the role:
   ```
   [User]: <message content>
@@ -113,6 +121,11 @@ directory where it was written.
 - If $ARGUMENTS contains `--chunk-size=N` or `--overlap=N`, edit the
   script invocation to pass those values (the script reads them from argv
   or can be patched at runtime via env vars in a future version).
+- **ChromaDB ingestion:** Output chunks land in `KB_Shared\04_output` but
+  are **not automatically ingested into ChromaDB**. The watcher only
+  monitors `02_data\` for triggers. To add the chunks to the knowledge
+  base, run `backfill_knowledge_base.py` in the `C:\_chunker` repo after
+  `/chunk-chat` completes, or use the manual process tool.
 
 ## AI Suffix Naming Convention
 

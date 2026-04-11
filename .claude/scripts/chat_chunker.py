@@ -7,7 +7,7 @@ enrichment, sidecar/transcript generation) with zero external dependencies
 beyond the Python 3 standard library.
 
 Usage:
-    python3 chat_chunker.py <input_file> [output_dir]
+    python chat_chunker.py <input_file> [output_dir]
 
 If output_dir is omitted, outputs to KB_Shared/04_output on OneDrive.
 """
@@ -207,7 +207,9 @@ def process(input_path: str, output_dir: str | None = None) -> dict:
     src = Path(input_path)
     text = src.read_text(encoding="utf-8", errors="replace")
 
-    timestamp = datetime.now().strftime("%Y_%m_%d_%H_%M_%S")
+    now = datetime.now()
+    timestamp = now.strftime("%Y_%m_%d_%H_%M_%S")
+    timestamp_iso = now.isoformat()
     # Sanitize basename: remove spaces, limit length
     basename = re.sub(r"[^\w\-.]", "_", src.stem)[:60]
 
@@ -228,7 +230,7 @@ def process(input_path: str, output_dir: str | None = None) -> dict:
         cfile = folder / f"chunk_{i:05d}.txt"
         cfile.write_text(chunk, encoding="utf-8")
 
-        chunk_id = f"{timestamp}:{basename}:{i:05d}"
+        chunk_id = f"{timestamp_iso}_{basename}_chunk{i+1}"
         chunk_records.append({
             "chunk_id": chunk_id,
             "chunk_index": i,
@@ -267,9 +269,11 @@ def process(input_path: str, output_dir: str | None = None) -> dict:
 
     sidecar = {
         "file": src.name,
-        "processed_at": datetime.now().isoformat(),
+        "source_path": str(src.resolve()),
+        "processed_at": timestamp_iso,
         "department": "conversation",
-        "type": "chat_log",
+        "source_type": "chat_log",
+        "language": "en",
         "output_folder": str(folder),
         "transcript": transcript_path.name,
         "chunks": chunk_records,
@@ -282,6 +286,7 @@ def process(input_path: str, output_dir: str | None = None) -> dict:
         "source_hash": content_hash,
         "total_chars": len(text),
         "total_chunks": len(chunks),
+        "enrichment_version": "1.0.0",
     }
     sidecar_path = folder / f"{timestamp}_{basename}_sidecar.json"
     sidecar_path.write_text(json.dumps(sidecar, indent=2), encoding="utf-8")
