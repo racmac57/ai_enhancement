@@ -175,19 +175,24 @@ Chunks the current conversation (or a provided file) into semantically meaningfu
 #### Output Structure
 
 ```
-./chunked_chat/{timestamp}_{name}/
+C:\Users\carucci_r\OneDrive - City of Hackensack\KB_Shared\04_output\{timestamp}_{name}/
   chunk_00000.txt ... chunk_NNNNN.txt   # individual semantic chunks
   {timestamp}_{name}_transcript.md      # full readable transcript
   {timestamp}_{name}_sidecar.json       # metadata, tags, key terms
   {timestamp}_{name}.origin.json        # provenance / source hash
 ```
 
+#### Naming Convention: {Topic}_{AI_Name}.md
+The skill enforces a specific naming convention for the exported transcript files:
+`Topic_Description_Claude.md` (or ChatGPT, Gemini, etc). This allows for consistent filtering and sorting in the knowledge base.
+
 #### Defaults
 
 - Chunk size: ~800 characters with 50-character overlap
 - Splitting: sentence-boundary based
 - Metadata enrichment: rule-based (no external API calls)
-- Output location: `./chunked_chat/` relative to the working directory
+- Output location: `KB_Shared\04_output` on OneDrive (default)
+- **ChromaDB**: Chunks are NOT automatically ingested. Run `backfill_knowledge_base.py` after processing.
 
 ---
 
