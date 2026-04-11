@@ -4,6 +4,19 @@ All notable changes to this project will be documented in this file.
 
 Format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 
+## [0.2.0] - 2026-04-10
+
+### Added
+- docs/CONVERSATION_ARCHIVIST_PROMPT.md: Reusable prompt for turning any AI into a
+  Conversation Archivist. Enforces {Topic_Description}_{AI_Name}.md naming convention
+  and KB_Shared/04_output as the default save location.
+
+### Changed
+- docs/SKILLS_HOW_TO.md: chunk-chat entry updated to reflect new default output path
+  (KB_Shared/04_output) and optional ai_name third argument.
+- .claude/skills/chunk-chat/SKILL.md: Synced with AI suffix naming convention, Windows
+  tempfile path fix, and OneDrive default output path.
+
 ## [0.1.0] - 2026-04-10
 
 ### Added
