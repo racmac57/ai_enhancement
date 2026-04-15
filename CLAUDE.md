@@ -23,11 +23,16 @@
 ### Skill Structure
 Every skill must follow this structure:
 ```
-.claude/skills/<skill-name>/
+<skill-name>/
   SKILL.md          # Required — YAML frontmatter + markdown body
   *.md              # Optional — supporting reference files
   scripts/          # Optional — helper scripts
 ```
+
+### Skill Install Location (single source of truth)
+- **All skills install to `~/.claude/skills/<skill-name>/SKILL.md`** (Windows: `C:\Users\carucci_r\.claude\skills\`). This is the sole authoritative install location.
+- Project-scoped skills may also live under `<repo>/.claude/skills/` when they are genuinely project-specific — but this repo (`ai_enhancement`) is **docs-only**. Do **not** place `SKILL.md` files under `ai_enhancement/.claude/skills/`; that directory has been removed.
+- The `docs/skills/` hub is documentation only: it catalogs skills (`SKILLS_INDEX.md`), holds aggregated guides, and per-skill how-tos (`how_to/<skill>.md`) created by `/qa-skill-hardening` Phase 7. It does **not** mirror `SKILL.md` files.
 
 ### SKILL.md Frontmatter Requirements
 Every `SKILL.md` must include valid YAML frontmatter with at minimum:
@@ -64,6 +69,7 @@ These files provide context that skills may reference:
 - `CHANGELOG.md` — version history and known issues
 - `docs/ARCHITECTURE.md` — project structure and design decisions
 - `docs/SUMMARY.md` — condensed project summary
+- `docs/skills/README.md` — **single catalog** for all Claude Code skills (global + project): paths, index, per-skill how-tos under `docs/skills/how_to/`
 
 ## Forbidden Patterns
 
