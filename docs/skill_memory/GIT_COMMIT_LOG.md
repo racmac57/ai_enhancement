@@ -14,6 +14,7 @@
 | `3b43378` | docs(skill-hardening): run-mva-etl 9/9 — memory, how-to, index; path fix logged (includes related `apply-s2-s3-s4` hub docs from same session) |
 | `89c650a` | docs(skill-hardening): SKILL_HARDENING_MASTER — run-mva-etl 9/9 row |
 | `4d4c11d` | fix(skill-hardening): inventory-wave — hub docs, 9/9 scorecard, Phase 7 how-to and index (`inventory-wave_MEMORY.md`, `how_to/inventory-wave.md`) |
+| `acbb2b8` | docs(skill-hardening): standardize-compstat-wb 9/9 — memory, regression markers, Phase 7 hub (`how_to/standardize-compstat-wb.md`, index, global_skills §11d) |
 | _(pending)_ | docs(skill-hardening): apply-s2-s3-s4 9/9 PASS + Phase 7 hub (`apply-s2-s3-s4_MEMORY.md`, how-to, index, `SKILL.md` context/failure modes) |
 
 ## User-Level Changes (not in git)
@@ -30,3 +31,4 @@ The following files were modified at `~/.claude/skills/` (outside this repo):
 | `etl-pipeline.md` | Added YAML frontmatter |
 | `html-report.md` | Added YAML frontmatter |
 | `chunk-chat/SKILL.md` | Fixed script path, temp path, description length |
+| `standardize-compstat-wb/SKILL.md` | Hard rules scoped to Workbook_Redesign_2026; anchor to repo `Claude.md`; add Repository context (paths relative to Workbook tree vs `ai_enhancement` / `00_dev`) |

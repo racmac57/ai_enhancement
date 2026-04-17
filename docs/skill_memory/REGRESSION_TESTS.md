@@ -68,3 +68,44 @@ No regressions detected. All previously-passing tests maintained PASS status aft
 | Skill | Pre-Hardening Score | Post-Hardening Score | Delta | Regressions |
 |-------|--------------------|--------------------|-------|-------------|
 | inventory-wave | n/a (first hub pass) | 9/9 | — | 0 |
+
+---
+
+## clean-summons-export (2026-04-17)
+
+**Markers**
+
+1. `SKILL.md` YAML present with `name: clean-summons-export`; description length <= 250.
+2. Slim output contract includes `MonthKey` and `Value` with output path `Data_Load/summons_slim_for_powerbi.csv`.
+3. No forbidden absolute-path placeholders (`/home/...`, `~/...`) in examples.
+
+**Automated checks**
+
+1. `python -c` with `yaml.safe_load` on `~/.claude/skills/clean-summons-export/SKILL.md` frontmatter (must not raise).
+2. `rg` markers for output schema and path safety flags.
+
+**Regression matrix**
+
+| Skill | Pre-Hardening Score | Post-Hardening Score | Delta | Regressions |
+|-------|--------------------|--------------------|-------|-------------|
+| clean-summons-export | n/a (first hub pass) | 9/9 | — | 0 |
+
+---
+
+## standardize-compstat-wb (2026-04-17)
+
+**Markers**
+
+1. `SKILL.md` YAML: `name: standardize-compstat-wb`, `description` length ≤ 250.
+2. Hard rules section must scope to **Workbook_Redesign_2026** and point at repo root **`Claude.md`** (same rules file as `inventory-wave` / `apply-s2-s3-s4` alignment).
+3. **Repository context** section present — paths relative to Workbook_Redesign_2026 root; ask if repo not open.
+
+**Automated checks**
+
+1. `python -c` with `yaml.safe_load` on frontmatter (must not raise).
+
+**Regression matrix**
+
+| Skill | Pre-Hardening Score | Post-Hardening Score | Delta | Regressions |
+|-------|--------------------|--------------------|-------|-------------|
+| standardize-compstat-wb | n/a (first hub pass) | 9/9 | — | 0 |

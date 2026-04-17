@@ -105,3 +105,29 @@ See `docs/skill_memory/GIT_COMMIT_LOG.md` for commit details.
 | Evidence | `inventory-wave_MEMORY.md` |
 
 **Note:** Full workbook inspection was not run from `00_dev` (legacy binaries live in Workbook_Redesign_2026). Hardening is static analysis, YAML, and rule alignment with `ai_enhancement/CLAUDE.md` plus redesign-specific path semantics.
+
+---
+
+## Addendum: 2026-04-17 — `clean-summons-export`
+
+| Metric | Value |
+|--------|-------|
+| Skill | `clean-summons-export` |
+| Score | 9/9 PASS |
+| Fix | No SKILL.md change required; validated frontmatter, path safety, output schema contract, idempotent overwrite behavior |
+| Evidence | `clean-summons-export_MEMORY.md` |
+
+**Note:** End-to-end CSV execution was not run from this workspace; hardening was performed as static/rule compliance validation with evidence capture.
+
+---
+
+## Addendum: 2026-04-17 — `standardize-compstat-wb`
+
+| Metric | Value |
+|--------|-------|
+| Skill | `standardize-compstat-wb` |
+| Score | 9/9 PASS |
+| Fix | Renamed hard-rule heading to **Workbook_Redesign_2026**; anchor rules to repo **`Claude.md`**; add **Repository context** (`$CLAUDE_PROJECT_DIR`, sibling to `00_dev` / `ai_enhancement`) |
+| Evidence | `standardize-compstat-wb_MEMORY.md` |
+
+**Note:** End-to-end Excel/PQ redesign was not executed from `ai_enhancement`; `Claude.md` was verified at `Workbook_Redesign_2026` on disk for cross-reference checks.

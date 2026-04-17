@@ -25,6 +25,7 @@ All skills available in R. Carucci's Claude Code environment, organized by scope
 | **standardize-m-code** | `/standardize-m-code` | Workbook_Redesign: wrap `standardize_m_code.py` with `--target-dir 02_Legacy_M_Code` (dry-run before apply) |
 | **apply-s2-s3-s4** | `/apply-s2-s3-s4` | Workbook_Redesign: S2/S3/S4 on a flat table (totals filter, PK dedupe, Value shim) + M snippet |
 | **run-mva-etl** | `/run-mva-etl` | Workbook_Redesign: preflight + `python mva_crash_etl.py` + post-checks; Markdown audit report |
+| **standardize-compstat-wb** | `/standardize-compstat-wb` | Workbook_Redesign Phase 3: one legacy Compstat workbook → flat schema plan + M rewrite + macro audit |
 
 ### Project Skills (cad_rms_data_quality only)
 
@@ -574,6 +575,44 @@ One Markdown file under `Docs/wave_<letter>_inventory.md` with the structure def
 - Paths (`01_Legacy_Copies/`, `Docs/`, `02_Legacy_M_Code/`) are relative to **Workbook_Redesign_2026** root — not `ai_enhancement` / SCRPA.
 - **Hard rules** in the skill come from **Workbook_Redesign_2026/CLAUDE.md**, not other projects’ `CLAUDE.md` files.
 - Do not write to legacy workbooks; output is Markdown only.
+
+---
+
+### 11d. /standardize-compstat-wb (Workbook_Redesign_2026)
+
+**Location:** `C:\Users\carucci_r\.claude\skills\standardize-compstat-wb\SKILL.md`  
+**Type:** Procedural (agent-driven redesign plan; read-only on legacy copies; optional `.m` writes via `/standardize-m-code`)  
+**Per-skill reference:** [how_to/standardize-compstat-wb.md](how_to/standardize-compstat-wb.md)
+
+#### What It Does
+
+End-to-end **Phase 3** recipe for a single legacy Compstat workbook: read the wave inventory, build a metric catalog and flat-table preview (pandas read-only), align Community Outreach units with `Docs/community_outreach_schema.md`, propose Excel validation rules, handle Patrol Summons bypass, rewrite Power Query `.m` around `pReportMonth` and S2/S3/S4 (via `standardize_m_code.py`), audit VBA if `.xlsm`, and emit **`Docs/redesign_<unit>.md`** with a human checklist. Default mode does **not** generate structured `.xlsx` from Python — that is Excel GUI or explicit XML zip surgery only.
+
+#### When to Use It
+
+- After `/inventory-wave` for the same workbook, when you are ready for the full redesign plan.
+- User names a workbook under `01_Legacy_Copies/` and wants the macro-free flat schema path.
+
+#### How to Use
+
+```
+/standardize-compstat-wb
+```
+
+Supply legacy path, intended redesigned output name, and the wave inventory Markdown. Follow steps in `SKILL.md` through emitting `Docs/redesign_<unit>.md`. For M changes:  
+`python standardize_m_code.py --target-dir 02_Legacy_M_Code --file <unit>.m` (dry-run, then `--apply` after review).
+
+#### Output
+
+- `Docs/redesign_<unit>.md` — catalog, flat preview summary, validation rules, M-code diff summary, macro audit, Excel actions.
+- Updated `.m` files when the user runs the standardize helper with `--apply`.
+- Optional new `.xlsx` via XML assembly **only** if the user explicitly opts in.
+
+#### Gotchas
+
+- Active project should be **Workbook_Redesign_2026** so relative paths resolve; otherwise ask for the tree root — same as `inventory-wave` and `/apply-s2-s3-s4`.
+- Hard rules match **`Claude.md`** at the Workbook repo root (read-only `01_Legacy_Copies/`, no Python structural Excel writes by default, macro-free `.xlsx`, `pReportMonth`).
+- For `patrol_monthly`, Summons is intentionally omitted from the redesigned workbook; DAX joins `summons_slim_for_powerbi.csv`.
 
 ---
 
