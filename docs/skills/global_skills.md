@@ -23,6 +23,8 @@ All skills available in R. Carucci's Claude Code environment, organized by scope
 | **simplify** | `/simplify` | Review changed code for quality |
 | **hpd-exec-comms** | `/hpd-exec-comms` | HPD/SSOCC executive communications — formal polish for internal, command, or descriptive outputs |
 | **standardize-m-code** | `/standardize-m-code` | Workbook_Redesign: wrap `standardize_m_code.py` with `--target-dir 02_Legacy_M_Code` (dry-run before apply) |
+| **apply-s2-s3-s4** | `/apply-s2-s3-s4` | Workbook_Redesign: S2/S3/S4 on a flat table (totals filter, PK dedupe, Value shim) + M snippet |
+| **run-mva-etl** | `/run-mva-etl` | Workbook_Redesign: preflight + `python mva_crash_etl.py` + post-checks; Markdown audit report |
 
 ### Project Skills (cad_rms_data_quality only)
 
@@ -498,6 +500,83 @@ Stdout diffs; with `--apply`, modified `.m` files. See the how-to for full patte
 
 - Must be run with **Workbook_Redesign** as the working tree — not `00_dev` / SCRPA.
 - Do not omit `--target-dir 02_Legacy_M_Code`.
+
+---
+
+### 11b. /run-mva-etl (Workbook_Redesign_2026)
+
+**Location:** `C:\Users\carucci_r\.claude\skills\run-mva-etl\SKILL.md`  
+**Type:** Read-mostly workflow (orchestrates `mva_crash_etl.py` + validation; does not edit the script)  
+**Per-skill reference:** [how_to/run-mva-etl.md](how_to/run-mva-etl.md)
+
+#### What It Does
+
+Wraps the zero-argument `mva_crash_etl.py` run with **preflight** (CAD + timereport present in `Data_Ingest/CAD_RMS_Exports/`), **post-checks** on `Data_Load/fact_mva_crashes_2026.csv` (canonical schema, dtypes, S2/S3/S4 proof, row delta vs prior, date coverage, unit/metric sanity WARNs), and a **Markdown run report** for audit.
+
+#### When to Use It
+
+- Monthly MVA crash refresh or after new CAD/timereport drops that already passed `/preflight-export`.
+- You need an auditable checklist rather than running the script alone.
+
+#### How to Use
+
+```
+/run-mva-etl
+```
+
+From the Workbook_Redesign_2026 repo root:
+
+```bash
+python mva_crash_etl.py
+```
+
+#### Output
+
+- Overwrites `Data_Load/fact_mva_crashes_2026.csv`.
+- Produces a structured Markdown run report (PASS/FAIL per section) as specified in `SKILL.md`.
+
+#### Gotchas
+
+- Must be run with **Workbook_Redesign_2026** as the working tree — not `00_dev` / SCRPA.
+- The fact table is overwritten in place; failed validation may require restoring the CSV from git history (documented in the skill).
+
+---
+
+### /apply-s2-s3-s4 (Workbook_Redesign — global)
+
+**Location:** `C:\Users\carucci_r\.claude\skills\apply-s2-s3-s4\SKILL.md`  
+**Type:** Procedural (embedded Python + Power Query M patterns)  
+**Per-skill reference:** [how_to/apply-s2-s3-s4.md](how_to/apply-s2-s3-s4.md)
+
+#### What It Does
+
+Generalizes the S2 → S3 → S4 sequence used in `mva_crash_etl.py` for any **non-MVA** Compstat unit: drop totals rows, deduplicate on a primary key (or composite keys), add or coerce a `Value` column for count-style metrics, then emit a Markdown diff report and an equivalent M-code stub for redesigned workbooks.
+
+#### When to Use It
+
+- Phase 2 per-workbook redesign when the source is still a wide flat sheet and you need the same prep as MVA before unpivot.
+- User asks to “apply S2/S3/S4”, “refactor this table for unpivot”, or “prep flat extract for Power Query”.
+
+#### How to Use
+
+```
+/apply-s2-s3-s4
+```
+
+Provide: path to CSV or Excel (or an in-memory DataFrame), primary-key column name(s), totals label (default substring `"Total"`), and whether `Value` should be shimmed to `1` or coerced from an existing column. Optional: save to `<original_dir>/_refactored/<basename>__s2s3s4.csv`.
+
+#### Output
+
+- Transformed DataFrame (and optional CSV) with S2/S3/S4 applied in order.
+- Markdown report (row drop counts, before/after row count).
+- Power Query M snippet with `<TableName>` / `<PK_COL>` placeholders — **M S2 row filter may check PK only**; Python default can scan all string columns; align with the skill if subtotals appear outside the PK field.
+
+#### Gotchas
+
+- Run against **Workbook_Redesign_2026** (or the user-supplied path) — not necessarily the `ai_enhancement` repo. `mva_crash_etl.py` and `standardize_m_code.py` are project files in that tree.
+- Never write in place under `01_Legacy_Copies/`.
+- Large inputs (>1M rows): `apply(axis=1)` for S2 is slow — warn the user.
+- Totals label `"Total"` can over-match column text such as “Total Stops”; confirm with the user when needed.
 
 ---
 

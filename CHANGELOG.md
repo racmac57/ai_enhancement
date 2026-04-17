@@ -8,6 +8,7 @@ Format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 
 ### Added
 
+- `/apply-s2-s3-s4` — documented in `docs/skills/` (SKILLS_INDEX, global_skills, `how_to/apply-s2-s3-s4.md`); hardening report in `docs/skill_memory/apply-s2-s3-s4_MEMORY.md`. Source `SKILL.md`: `~/.claude/skills/apply-s2-s3-s4/` (repository context + failure modes added 2026-04-17).
 - `docs/skills/README.md` — reference hub for all skills (implementations may live anywhere).
 - `docs/skills/how_to/` — per-skill reference markdown; `_TEMPLATE.md` and `hpd-exec-comms.md` seed; filled/updated by `/qa-skill-hardening` Phase 7.
 - `SKILLS_INDEX.md` — expanded with `SKILL.md` paths, per-skill how-to links, and aggregated guide column; includes `hpd-exec-comms`.

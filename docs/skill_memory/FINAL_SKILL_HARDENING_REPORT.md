@@ -62,3 +62,33 @@ See `docs/skill_memory/GIT_COMMIT_LOG.md` for commit details.
 
 - Status: YES
 - Reason: All 6 skills tested. 5 fully passing (9/9). 1 blocked on a single non-functional issue in a third-party repo. 11 defects fixed across 5 skills. Zero regressions.
+
+---
+
+## Supplement: 2026-04-17 — `apply-s2-s3-s4`
+
+| Metric | Value |
+|--------|-------|
+| Total Skills (this run) | 1 |
+| Fully Passing (9/9) | 1 |
+| Blocked | 0 |
+| Fixes in `SKILL.md` | Repository context + failure modes table |
+
+| Skill | T1 | T2 | T3 | T4 | T5 | T6 | T7 | T8 | T9 | Score | Status |
+|-------|----|----|----|----|----|----|----|----|-----|-------|--------|
+| apply-s2-s3-s4 | 1 | 1 | 1 | 1 | 1 | 1 | 1 | 1 | 1 | 9/9 | PASS |
+
+**Autonomous Swarm Completion (supplement):** YES — single targeted run completed with documentation sync (Phase 7).
+
+---
+
+## Addendum: 2026-04-17 — `run-mva-etl`
+
+| Metric | Value |
+|--------|-------|
+| Skill | `run-mva-etl` |
+| Score | 9/9 PASS |
+| Fix | Removed forbidden `/home/user/...` path example from `~/.claude/skills/run-mva-etl/SKILL.md`; run `python mva_crash_etl.py` from Workbook_Redesign_2026 repo root |
+| Evidence | `run-mva-etl_MEMORY.md` |
+
+**Note:** End-to-end execution of `mva_crash_etl.py` was not run from this workspace (script lives in Workbook_Redesign_2026). Hardening is static plus path/rule compliance.
