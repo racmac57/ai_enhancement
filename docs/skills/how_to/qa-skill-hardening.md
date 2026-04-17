@@ -89,3 +89,54 @@ PHASE 7: Documentation Sync (passing skills only)
 ## Hardening
 
 - Scorecard (when run from a project with `docs/skill_memory/`): `docs/skill_memory/qa-skill-hardening_MEMORY.md` (if ever produced; normally self-skipped).
+
+## Parallel Mode
+
+The skill supports running multiple agents in parallel — one per skill — with a coordinator merge step at the end. This avoids write conflicts on shared files (`SKILL_HARDENING_MASTER.md`, `REGRESSION_TESTS.md`, `FINAL_SKILL_HARDENING_REPORT.md`, `SKILLS_INDEX.md`, `global_skills.md`).
+
+### When to use
+
+- Hardening 3+ skills at once and you want to run them concurrently across terminals / agent sessions.
+- Any run where two or more agents might otherwise race on the shared tracker files.
+
+### Invoke pattern
+
+Activate parallel mode by passing `parallel=true` (or multiple `target=` values) to each agent. Each agent owns exactly one skill and writes only to its own per-skill `MEMORY.md` / `how_to/<skill>.md`.
+
+```text
+# Terminal 1
+/qa-skill-hardening target=etl-pipeline parallel=true
+# Terminal 2
+/qa-skill-hardening target=arcgis-pro parallel=true
+# Terminal 3
+/qa-skill-hardening target=data-validation parallel=true
+# After all complete — any single terminal
+/qa-skill-hardening merge=true
+```
+
+### Rules in parallel mode
+
+1. **One skill per agent.** Never assign two skills to one agent in parallel mode.
+2. **Shared files are coordinator-owned.** During Phases 1–7, agents do NOT write to:
+   - `docs/skill_memory/SKILL_HARDENING_MASTER.md`
+   - `docs/skill_memory/REGRESSION_TESTS.md`
+   - `docs/skill_memory/FINAL_SKILL_HARDENING_REPORT.md`
+   - `docs/skills/SKILLS_INDEX.md`
+   - `docs/skills/global_skills.md`
+3. **Phase 7 SKILLS_INDEX update is deferred.** Each agent logs `"SKILLS_INDEX update deferred — parallel mode. Coordinator will merge."` instead of writing the index.
+4. **Coordinator merge runs once.** After every parallel agent reports 9/9 PASS, a single designated coordinator (or the user) invokes `/qa-skill-hardening merge=true`.
+
+### Merge mode (`merge=true`)
+
+The coordinator reads every per-skill `*_MEMORY.md` from this session and writes the shared files in a single non-conflicting pass:
+
+1. Read all `docs/skill_memory/*_MEMORY.md` files produced this session.
+2. Append results into `SKILL_HARDENING_MASTER.md` (no overwrites).
+3. Append regression tests into `REGRESSION_TESTS.md`.
+4. Regenerate `FINAL_SKILL_HARDENING_REPORT.md` with combined totals.
+5. Update `SKILLS_INDEX.md` — one row per skill, single write.
+6. Update `docs/skills/global_skills.md` — append missing entries only.
+7. Commit shared files in one commit: `qa-skill-hardening: merge parallel results — [skill1, skill2, skill3]`.
+8. Report a table showing each skill's final score and merge status.
+
+**Merge guard:** if any per-skill `MEMORY.md` is missing or shows non-PASS, the coordinator prints a warning listing the incomplete skills and asks for confirmation before a partial merge.

@@ -15,7 +15,7 @@
 
 | Skill | SKILL.md path | Per-skill how-to | Aggregated guide | One-line description |
 |-------|---------------|------------------|------------------|----------------------|
-| qa-skill-hardening | `C:\Users\carucci_r\.claude\skills\qa-skill-hardening\SKILL.md` | [how_to/qa-skill-hardening.md](how_to/qa-skill-hardening.md) | [global_skills.md](global_skills.md) | Multi-agent QA swarm that auto-discovers, tests, and hardens every skill in a project |
+| qa-skill-hardening | `C:\Users\carucci_r\.claude\skills\qa-skill-hardening\SKILL.md` | [how_to/qa-skill-hardening.md](how_to/qa-skill-hardening.md) | [global_skills.md](global_skills.md) | Multi-agent QA swarm that auto-discovers, tests, and hardens every skill in a project — now supports parallel multi-agent mode (`parallel=true`) with a coordinator `merge=true` step |
 | frontend-slides | `C:\Users\carucci_r\.claude\skills\frontend-slides\SKILL.md` | [how_to/frontend-slides.md](how_to/frontend-slides.md) | [global_skills.md](global_skills.md) | Build HTML presentations from scratch or from an existing PowerPoint |
 | chunk-chat | `C:\Users\carucci_r\.claude\skills\chunk-chat\SKILL.md` | [how_to/chunk-chat.md](how_to/chunk-chat.md) | [global_skills.md](global_skills.md) | Chunk long conversations into sized pieces for RAG ingestion |
 | arcgis-pro | `C:\Users\carucci_r\.claude\skills\arcgis-pro\SKILL.md` | [how_to/arcgis-pro.md](how_to/arcgis-pro.md) | [global_skills.md](global_skills.md) | Guide arcpy scripts for ArcGIS Pro's bundled Python (no pip, scratchGDB, exec-compatible) |
