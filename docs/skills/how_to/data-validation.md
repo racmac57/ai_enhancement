@@ -53,5 +53,5 @@ No files are written by the skill itself.
 
 ## Hardening
 
-- Last scorecard: `C:\Users\carucci_r\.claude\skills\docs\skill_memory\data-validation_MEMORY.md`
+- **Scorecard:** After `/qa-skill-hardening` Phase 7, see `~/.claude/skills/docs/skill_memory/data-validation_MEMORY.md` when generated.
 - Status as of 2026-04-16: **9/9 PASS** (Iteration 2). Regression markers: `## Inputs & Failure Modes` header (T6) + `dtype={'ReportNumberNew': str` literal (T8) — see `REGRESSION_TESTS.md`.

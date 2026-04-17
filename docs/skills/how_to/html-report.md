@@ -52,4 +52,4 @@ Skip when the user needs a Power BI / ArcGIS dashboard, a plain-text memo (`/hpd
 
 ## Hardening
 
-- Last scorecard: `C:\Users\carucci_r\.claude\skills\docs\skill_memory\html-report_MEMORY.md` (when available from a hardening run).
+- **Scorecard:** After `/qa-skill-hardening` Phase 7, see `~/.claude/skills/docs/skill_memory/html-report_MEMORY.md` when generated.

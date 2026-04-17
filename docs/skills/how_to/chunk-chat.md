@@ -15,12 +15,12 @@
 
 ## One-line description
 
-Chunk long conversations into sized pieces for RAG ingestion.
+Split conversations into fixed-size, sentence-boundary chunks for RAG ingestion (sidecar metadata 2.0; not embedding-based semantic clustering).
 
 ## When to use
 
 - Saving the current session for RAG ingestion into the Enterprise Chunker knowledge base.
-- Preparing a conversation or chat-log file for semantic search (ChromaDB-backed).
+- Preparing a conversation or chat-log file for vector search after ingestion (ChromaDB-backed); chunks themselves are sentence-boundary splits, not semantic clusters.
 - Splitting a long transcript into sentence-boundary chunks without invoking the `02_data/` watcher.
 
 ## How to use
@@ -38,7 +38,7 @@ If no file path is supplied, the skill reconstructs the conversation from its co
 
 Per-run folder under `C:\Users\carucci_r\OneDrive - City of Hackensack\KB_Shared\04_output\{timestamp}_{Topic_Description}_Claude\`:
 
-- `chunk_00000.txt ... chunk_NNNNN.txt` — sentence-boundary semantic chunks (~800 chars, 50-char overlap by default).
+- `chunk_00000.txt ... chunk_NNNNN.txt` — sentence-boundary text chunks (~800 chars, 50-char overlap by default).
 - `{timestamp}_{name}_transcript.md` — full readable transcript.
 - `{timestamp}_{name}_sidecar.json` — per-chunk metadata (tags, key terms, summary, `source_type`, `language`, `enrichment_version`).
 - `{timestamp}_{name}.origin.json` — provenance and source hash.
@@ -58,4 +58,4 @@ Override the destination by passing an explicit output dir as the second positio
 
 ## Hardening
 
-- Last hardened during the 2026-04-10 dual-session blitz (`HANDOFF_20260410_Skill_Hardening_Final.md`) — Windows temp-dir fix, `python3`→`python`, sidecar schema aligned with Enterprise Chunker (`source_type`, `language`, `enrichment_version`). Re-run `/qa-skill-hardening chunk-chat` to refresh the scorecard.
+- Last hardened during the 2026-04-10 dual-session blitz (`HANDOFF_20260410_Skill_Hardening_Final.md`) — Windows temp-dir fix, `python3`→`python`, sidecar schema aligned with Enterprise Chunker (`source_type`, `language`, `enrichment_version`). Re-run `/qa-skill-hardening chunk-chat` to refresh the scorecard at `~/.claude/skills/docs/skill_memory/chunk-chat_MEMORY.md` when generated.

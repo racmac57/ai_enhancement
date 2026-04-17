@@ -37,4 +37,4 @@
 
 ## Hardening
 
-- Last scorecard: `docs/skill_memory/<Skill_Name>_MEMORY.md` (in the repo where hardening was run, if applicable)
+- **Scorecard:** Global skills: `~/.claude/skills/docs/skill_memory/<Skill_Name>_MEMORY.md` after `/qa-skill-hardening` Phase 7; project repos may use `docs/skill_memory/` under that repo instead.

@@ -53,4 +53,4 @@ No files produced directly. The skill shapes the code Claude writes into other f
 
 ## Hardening
 
-- Last scorecard: `C:\Users\carucci_r\.claude\skills\docs\skill_memory\arcgis-pro_MEMORY.md` — **9/9 PASS** on 2026-04-16 (Iteration 2 after T6 Error Handling fix).
+- **Scorecard:** `~/.claude/skills/docs/skill_memory/arcgis-pro_MEMORY.md` — **9/9 PASS** on 2026-04-16 (Iteration 2 after T6 Error Handling fix); future runs refresh the same path.

@@ -39,4 +39,4 @@ HPD Executive Communications Chief: turn raw law enforcement drafts or data into
 
 ## Hardening
 
-- Scorecard (when run from a project with `docs/skill_memory/`): `docs/skill_memory/hpd-exec-comms_MEMORY.md` or equivalent.
+- **Scorecard:** `~/.claude/skills/docs/skill_memory/hpd-exec-comms_MEMORY.md` after a global hardening run, or `docs/skill_memory/hpd-exec-comms_MEMORY.md` in the project repo if hardening was run there.

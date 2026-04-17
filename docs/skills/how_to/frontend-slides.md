@@ -61,4 +61,4 @@ The skill will ask a batched `AskUserQuestion` covering purpose, length, content
 
 ## Hardening
 
-- Last scorecard: `C:\Users\carucci_r\.claude\skills\docs\skill_memory\frontend-slides_MEMORY.md` (if present — refreshed by `/qa-skill-hardening`).
+- **Scorecard:** After `/qa-skill-hardening` Phase 7, see `~/.claude/skills/docs/skill_memory/frontend-slides_MEMORY.md` when generated.

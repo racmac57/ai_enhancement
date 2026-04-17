@@ -66,6 +66,6 @@ None. The skill returns guidance text:
 
 ## Hardening
 
-- Last scorecard: `C:\Users\carucci_r\.claude\skills\docs\skill_memory\etl-pipeline_MEMORY.md`
+- **Scorecard:** After `/qa-skill-hardening` Phase 7, see `~/.claude/skills/docs/skill_memory/etl-pipeline_MEMORY.md` when generated.
 - Run date: 2026-04-16
 - Result: **9 / 9 PASS** — clean first pass, no fixes applied

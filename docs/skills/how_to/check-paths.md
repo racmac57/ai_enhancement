@@ -68,11 +68,10 @@ Additional notes:
   best-effort is acceptable.
 - This is the **GLOBAL** variant. A project-scoped variant also exists at
   `02_ETL_Scripts/cad_rms_data_quality/.claude/skills/check-paths/SKILL.md`
-  (see [check-paths__cad_rms.md](check-paths__cad_rms.md)). The project
+  (see [cad_rms_data_quality_skills.md](../cad_rms_data_quality_skills.md) — Quick Reference row 1). The project
   variant may extend the rule set with domain-specific checks; when both
   are registered, the project skill takes precedence for cad_rms work.
 
 ## Hardening
 
-- Last scorecard: `docs/skill_memory/check-paths_MEMORY.md` (populated by
-  `/qa-skill-hardening` Phase 7 once the skill is scored).
+- **Scorecard:** After `/qa-skill-hardening` Phase 7 (9/9), evidence is written to `~/.claude/skills/docs/skill_memory/check-paths_MEMORY.md` on this machine if the run targets this skill.
