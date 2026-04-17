@@ -17,9 +17,11 @@ All skills available in R. Carucci's Claude Code environment, organized by scope
 | **html-report** | `/html-report` | HPD-branded self-contained HTML reports |
 | **check-paths** | `/check-paths` | Scan for path hygiene issues in scripts |
 | **new-etl** | `/new-etl Project_Name` | Scaffold a new ETL pipeline |
+| **etl-pipeline** | `/etl-pipeline` | Standard ETL workflow / load patterns for CAD, RMS, Arrests, Summons |
 | **frontend-design** | `/frontend-design` | Distinctive production-grade UI |
 | **claude-api** | `/claude-api` | Build/debug Claude API apps |
 | **simplify** | `/simplify` | Review changed code for quality |
+| **hpd-exec-comms** | `/hpd-exec-comms` | HPD/SSOCC executive communications — formal polish for internal, command, or descriptive outputs |
 
 ### Project Skills (cad_rms_data_quality only)
 
@@ -196,22 +198,38 @@ The skill enforces a specific naming convention for the exported transcript file
 
 ---
 
-### 4. /validate-data
+### 4. /data-validation and /validate-data
 
-**Location:** `~/.claude/commands/validate-data.md`
-**Type:** Read-only (analysis)
+Two related global artifacts cover the same domain:
 
-#### What It Does
+| Invocation | Source file | Form |
+|------------|-------------|------|
+| `/data-validation` | `~/.claude/skills/data-validation/SKILL.md` | SKILL.md with YAML frontmatter (descriptive) |
+| `/validate-data` | `~/.claude/commands/validate-data.md` | Command-style (numbered steps, no frontmatter) |
 
-Runs standard data quality checks against an Excel or CSV file, with rules tuned to HPD's data domain (CAD, RMS, NIBRS).
+Both run **standard data quality checks** against an Excel or CSV file with rules tuned to HPD's data domain (CAD, RMS, NIBRS). Use whichever invocation you prefer; they describe the same workflow.
 
 #### How to Use
 
 ```
-/validate-data
+/data-validation        # SKILL form
+/validate-data          # command form
 ```
 
 Then provide the file path when prompted.
+
+#### Inputs and Failure Modes (data-validation SKILL.md, post-hardening)
+
+- **Required input:** path to `.xlsx` or `.csv`. If the path does not exist or cannot be read, the skill **stops and reports the failing path** — it does not silently continue with an empty frame.
+- **Missing required column:** the affected check is marked **N/A** with the column name surfaced. No fabricated values, no silent PASS.
+
+#### Load Conventions (mandatory)
+
+```python
+pd.read_excel(path, dtype={'ReportNumberNew': str, 'CaseNumber': str})
+```
+
+This is a hard CLAUDE.md rule: forcing string dtype preserves `YY-NNNNNN` against Excel's leading-zero stripping. Apply equivalently to `pd.read_csv`.
 
 #### Checks Performed
 
@@ -222,14 +240,17 @@ Then provide the file path when prompted.
 | **Domain compliance** | Validates `How Reported` values against the canonical list (9-1-1, Phone, Walk-In, Self-Initiated, etc.) |
 | **Duplicates** | Counts duplicate `ReportNumberNew` values; shows top 10 |
 | **Format** | Verifies `ReportNumberNew` matches `YY-NNNNNN` pattern |
+| **Before/after deltas** | When replacing a file: row counts + key metric deltas (data-validation SKILL only) |
 
 #### Critical Fields Monitored
 
 `ReportNumberNew`, `Incident`, `Time of Call`, `FullAddress2`, `PDZone`, `How Reported`, `Disposition`
 
-#### Important
+#### Hardening
 
-`ReportNumberNew` is always loaded as string dtype to preserve the `YY-NNNNNN` format (Excel strips leading zeros).
+`/data-validation` is hardened **9/9 PASS** as of 2026-04-16. See `~/.claude/skills/docs/skill_memory/data-validation_MEMORY.md` for the scorecard and `REGRESSION_TESTS.md` for the markers protecting T6 (Error Handling) and T8 (CLAUDE.md `dtype=str` rule).
+
+Per-skill how-to: [how_to/data-validation.md](how_to/data-validation.md).
 
 ---
 
@@ -392,6 +413,130 @@ Reviews changed code for reuse opportunities, quality issues, and efficiency pro
 ```
 
 Best used after making changes to code, before committing.
+
+---
+
+### 11. /etl-pipeline
+
+**Location:** `C:\Users\carucci_r\.claude\skills\etl-pipeline\SKILL.md`
+**Type:** Read-only guidance (no executable code)
+**Per-skill reference:** [how_to/etl-pipeline.md](how_to/etl-pipeline.md)
+
+#### What It Does
+
+Guides building and modifying ETL scripts for law enforcement data (CAD, RMS, Arrests, Summons) under `02_ETL_Scripts/`. Enforces the standard load pattern, path-resolution convention, pre-write quality checks, and archive-first output rules defined in the global `CLAUDE.md`.
+
+#### When to Use It
+
+- Authoring a new ETL script or modifying an existing one under `02_ETL_Scripts/`.
+- A load is about to touch an Excel file containing case-number columns (`ReportNumberNew`, `ComplaintNum`, etc.) where leading-zero preservation matters.
+- You need a quick reminder of the canonical pipeline shape before writing new code.
+
+Pairs naturally with `/new-etl` (scaffold first, then follow `/etl-pipeline` for the code inside).
+
+#### How to Use
+
+```
+/etl-pipeline
+```
+
+The skill is guidance-only — it responds with the load pattern, pipeline shape, library list, and reference pointers. There is no command-line argument.
+
+#### Output
+
+No files. Returns the 6-step pipeline shape:
+1. Resolve paths via `path_config.get_onedrive_root()` or project-relative paths.
+2. Load source and validate required columns against `09_Reference/Standards/`.
+3. Normalize fields (dates, categories, addresses).
+4. Run quality checks (nulls, duplicates, domain values) **before** writing.
+5. Write outputs under the project folder or `13_PROCESSED_DATA/` using `YYYY_MM_DD_` naming.
+6. Archive superseded source files under `archive/` with a datestamp — never delete.
+
+#### Gotchas
+
+- Always force `dtype={"ReportNumberNew": str}` when reading Excel; otherwise leading zeros in `YY-NNNNNN` case numbers are silently lost.
+- The guidance lists `pandas, openpyxl, pathlib, PyYAML`. In ArcGIS Pro environments use `/arcgis-pro` instead — PyYAML is not available and `scratchGDB`, not `memory`, is the correct workspace.
+- `path_config.py` is a convention (per `CLAUDE.md`), not a shared deployed module. `/new-etl` scaffolds the helper; otherwise you may need to author it at the top of a new project.
+- Skill description currently names CAD/RMS/Arrests/Summons; NIBRS and Clery pipelines follow the same shape even though they are not enumerated.
+
+---
+
+### 12. /arcgis-pro
+
+**Location:** `C:\Users\carucci_r\.claude\skills\arcgis-pro\SKILL.md`
+**Type:** Read-only guidance (no executable code)
+**Per-skill reference:** [how_to/arcgis-pro.md](how_to/arcgis-pro.md)
+
+#### What It Does
+
+Guides Claude in writing Python scripts for ArcGIS Pro's bundled arcpy environment. Enforces the Pro-specific constraints that differ from the general ETL stack: no `pip`, no `PyYAML`, no package-style layouts, `scratchGDB` instead of `in_memory`, and exec-compatible script shapes so scripts run cleanly from the Pro Python window.
+
+#### When to Use It
+
+- Writing or modifying any arcpy script — Clery, SCRPA, CAD dashboard pipelines, ESRI publish scripts, geoprocessing utilities.
+- Scripts destined for the HPD2022LAWSOFT RDP server that run via the ArcGIS Pro Python interpreter or Task Scheduler.
+- Any workflow where `in_memory` or `pip install` would be tempting but wrong.
+
+Use `/etl-pipeline` instead when the script is plain pandas/openpyxl ETL without arcpy. The two skills share the `carucci_r` path rule but differ on libraries and workspace conventions.
+
+#### How to Use
+
+```
+/arcgis-pro
+```
+
+The skill is guidance-only — it shapes the code Claude produces into other files. There is no command-line argument.
+
+#### Output
+
+No files. Claude-authored code that is:
+- Compatible with `exec(open(r"path\to\script.py").read())` from the Pro Python window.
+- Compatible with command-line / Task Scheduler invocation via `C:\Program Files\ArcGIS\Pro\bin\Python\envs\arcgispro-py3\python.exe`.
+- Defensive: try/except around arcpy calls, `arcpy.GetMessages(2)` on failure, non-zero `sys.exit` so Task Scheduler surfaces the failure.
+
+#### Gotchas
+
+- **`sys.argv` does NOT work under the Pro Python window `exec()`** — it's populated only for command-line / Task Scheduler invocation. For exec-based runs, set module-level variables in the Pro window before calling `exec()`.
+- **`print()` vs `arcpy.AddMessage`:** inside geoprocessing tools, use `arcpy.AddMessage/AddWarning/AddError`. `print()` only surfaces in the Pro Python window.
+- **Clear `scratchGDB` between re-runs** for idempotency.
+- **Never `pip install`** in the Pro default env. If a cloned env is in use, the user must document it.
+- **Paths:** `carucci_r`, never `RobertCarucci`. When a script also writes file outputs, respect `path_config.get_onedrive_root()`.
+- **Project-specific helpers** (local geocoders, assignment lookups) live under `10_Projects/*/CLAUDE.md` — consult that before inventing new import paths.
+
+---
+
+### /hpd-exec-comms (global add-on)
+
+**Location:** `C:\Users\carucci_r\.claude\skills\hpd-exec-comms\SKILL.md`  
+**Type:** Global  
+**Per-skill reference:** [how_to/hpd-exec-comms.md](how_to/hpd-exec-comms.md)
+
+#### What It Does
+
+Processes raw law enforcement drafts or data into polished **HPD Executive Communications** output for the SSOCC: internal department messages, **command staff** summaries, or **descriptive / technical** narratives (e.g. incident narratives, official records). Does **not** target generic rewrites or press releases.
+
+#### When to Use It
+
+- Audience or scope is clearly HPD General, Command Staff, or Descriptive/Technical per the skill’s intent table.
+- You need formal tone, brevity, and SSOCC-aligned structure.
+
+#### How to Use
+
+```
+/hpd-exec-comms
+```
+
+Paste or attach the source material; follow the **Intent Detection** / format rules in `SKILL.md` (Executive Rewrite, Internal Email, Incident Narrative).
+
+#### Output
+
+Structured written output per selected format; see `SKILL.md` for signature blocks and format rules.
+
+#### Gotchas
+
+- Do **not** trigger when the request is generic polish without HPD/SSOCC scope.
+- Do **not** use for press releases.
+- Ambiguous inputs: clarify audience and format before drafting.
 
 ---
 
@@ -705,7 +850,7 @@ Final recommendation: **PUBLISH** / **REVIEW BEFORE PUBLISHING** / **DO NOT PUBL
 
 | Location | Scope | Contents |
 |----------|-------|----------|
-| `~/.claude/skills/` | Global (all projects) | frontend-slides, chunk-chat, qa-skill-hardening, html-report |
+| `~/.claude/skills/` | Global (all projects) | frontend-slides, chunk-chat, qa-skill-hardening, html-report, hpd-exec-comms, … |
 | `~/.claude/commands/` | Global (all projects) | validate-data, html-report, check-paths, new-etl |
 | `~/.claude/plugins/` | Global (marketplace) | frontend-design |
 | `ai_enhancement/.claude/skills/` | ai_enhancement only | qa-skill-hardening (hardened copy) |
