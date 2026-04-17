@@ -30,6 +30,7 @@
 | hpd-exec-comms | `C:\Users\carucci_r\.claude\skills\hpd-exec-comms\SKILL.md` | [how_to/hpd-exec-comms.md](how_to/hpd-exec-comms.md) | [global_skills.md](global_skills.md) | HPD / SSOCC executive communications — polish drafts into formal internal, command-staff, or descriptive outputs |
 | standardize-m-code | `C:\Users\carucci_r\.claude\skills\standardize-m-code\SKILL.md` | [how_to/standardize-m-code.md](how_to/standardize-m-code.md) | [global_skills.md](global_skills.md) | Wrapper for `standardize_m_code.py` — always pass `--target-dir 02_Legacy_M_Code`; dry-run first, then `--apply` (Workbook_Redesign_2026) |
 | apply-s2-s3-s4 | `C:\Users\carucci_r\.claude\skills\apply-s2-s3-s4\SKILL.md` | [how_to/apply-s2-s3-s4.md](how_to/apply-s2-s3-s4.md) | [global_skills.md](global_skills.md) | Workbook_Redesign: apply S2 (drop totals), S3 (dedupe PK), S4 (Value shim) to a flat CSV/XLSX + emit equivalent Power Query M snippet |
+| inventory-wave | `C:\Users\carucci_r\.claude\skills\inventory-wave\SKILL.md` | [how_to/inventory-wave.md](how_to/inventory-wave.md) | [global_skills.md](global_skills.md) | Workbook_Redesign Phase 1: last-6-month + `_mom` + aux inventory to `Docs/wave_<letter>_inventory.md` (macros, validation gaps, flat-schema map) |
 
 > Rows marked _Built-in Claude Code skill_ or _Cursor/Claude plugin_ have **no** `SKILL.md` under `~/.claude\skills\`. They are included for discoverability; see the per-skill how-to for invocation details.
 

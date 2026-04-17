@@ -92,3 +92,16 @@ See `docs/skill_memory/GIT_COMMIT_LOG.md` for commit details.
 | Evidence | `run-mva-etl_MEMORY.md` |
 
 **Note:** End-to-end execution of `mva_crash_etl.py` was not run from this workspace (script lives in Workbook_Redesign_2026). Hardening is static plus path/rule compliance.
+
+---
+
+## Addendum: 2026-04-17 — `inventory-wave`
+
+| Metric | Value |
+|--------|-------|
+| Skill | `inventory-wave` |
+| Score | 9/9 PASS |
+| Fix | Disambiguate **Workbook_Redesign_2026/CLAUDE.md** vs other projects; add **Repository context**; require stopping when required inputs missing; offer update vs regenerate when inventory exists |
+| Evidence | `inventory-wave_MEMORY.md` |
+
+**Note:** Full workbook inspection was not run from `00_dev` (legacy binaries live in Workbook_Redesign_2026). Hardening is static analysis, YAML, and rule alignment with `ai_enhancement/CLAUDE.md` plus redesign-specific path semantics.

@@ -542,6 +542,41 @@ python mva_crash_etl.py
 
 ---
 
+### 11c. /inventory-wave (Workbook_Redesign_2026)
+
+**Location:** `C:\Users\carucci_r\.claude\skills\inventory-wave\SKILL.md`  
+**Type:** Procedural (agent-driven Markdown artifact; read-only on legacy workbooks)  
+**Per-skill reference:** [how_to/inventory-wave.md](how_to/inventory-wave.md)
+
+#### What It Does
+
+Phase 1 **wave inventory**: for 3–4 legacy Compstat workbooks, produces `Docs/wave_<letter>_inventory.md` listing sheets, the **last six** monthly sheets per scope rules, `_mom` and auxiliary tables, validation gaps, named ranges / M-code cross-refs, VBA macro audit when `.xlsm`, and a proposed mapping to the canonical flat schema (`Date`, `Unit`, `MetricGroup`, `Metric`, `Value`). Enforces context-window discipline — never deep-inspects whole estates.
+
+#### When to Use It
+
+- User requests a wave inventory, names Wave A–D, or drops workbook paths for Phase 1.
+- Before `/standardize-compstat-wb` when a fresh inventory is needed.
+
+#### How to Use
+
+```
+/inventory-wave
+```
+
+Supply wave letter, 3–4 workbook paths, optional date cutoff. Follow open/read-only patterns in `SKILL.md` (`openpyxl` read-only, optional pandas). If `Docs/wave_<letter>_inventory.md` exists, choose update vs regenerate before re-reading binaries.
+
+#### Output
+
+One Markdown file under `Docs/wave_<letter>_inventory.md` with the structure defined in `SKILL.md` (file breakdown, cross-workbook notes, redesign order, Phase 2 checklist).
+
+#### Gotchas
+
+- Paths (`01_Legacy_Copies/`, `Docs/`, `02_Legacy_M_Code/`) are relative to **Workbook_Redesign_2026** root — not `ai_enhancement` / SCRPA.
+- **Hard rules** in the skill come from **Workbook_Redesign_2026/CLAUDE.md**, not other projects’ `CLAUDE.md` files.
+- Do not write to legacy workbooks; output is Markdown only.
+
+---
+
 ### /apply-s2-s3-s4 (Workbook_Redesign — global)
 
 **Location:** `C:\Users\carucci_r\.claude\skills\apply-s2-s3-s4\SKILL.md`  

@@ -44,3 +44,27 @@ No regressions detected. All previously-passing tests maintained PASS status aft
 | run-mva-etl | n/a (first hub entry) | 9/9 | — | 0 |
 
 **Regression guard:** Re-ran static 9-step criteria after SKILL.md path fix; all remained PASS. No other skills in this repo were modified during this run.
+
+---
+
+## inventory-wave (2026-04-17)
+
+**Markers**
+
+1. `SKILL.md` YAML: `name: inventory-wave`, `description` length ≤ 250.
+2. Section **Hard rules** must name **Workbook_Redesign_2026/CLAUDE.md** (not generic `CLAUDE.md`).
+3. **Repository context** section present — paths relative to Workbook_Redesign_2026 root; ask if repo not open.
+
+**Automated checks**
+
+1. `python -c` with `yaml.safe_load` on frontmatter (must not raise).
+
+**Manual**
+
+1. Confirm no forbidden placeholder paths in examples (`/home/user/...`).
+
+**Regression matrix**
+
+| Skill | Pre-Hardening Score | Post-Hardening Score | Delta | Regressions |
+|-------|--------------------|--------------------|-------|-------------|
+| inventory-wave | n/a (first hub pass) | 9/9 | — | 0 |
