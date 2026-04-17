@@ -11,7 +11,8 @@
 
 | Commit | Summary |
 |--------|---------|
-| _(pending)_ | docs(skill-hardening): run-mva-etl 9/9 — memory, how-to, index, path fix logged |
+| `3b43378` | docs(skill-hardening): run-mva-etl 9/9 — memory, how-to, index; path fix logged (includes related `apply-s2-s3-s4` hub docs from same session) |
+| _(pending)_ | docs(skill-hardening): SKILL_HARDENING_MASTER run-mva-etl row + 2026-04-17 update line |
 | _(pending)_ | docs(skill-hardening): apply-s2-s3-s4 9/9 PASS + Phase 7 hub (`apply-s2-s3-s4_MEMORY.md`, how-to, index, `SKILL.md` context/failure modes) |
 
 ## User-Level Changes (not in git)
