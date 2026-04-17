@@ -84,7 +84,7 @@ PHASE 7: Documentation Sync (passing skills only)
 - **Never pushes.** Phase 6 commits locally only; pushing is a human decision.
 - **Regression gate is absolute.** If any previously passing test now fails, the run must fix it before committing — no "known regressions".
 - **Self-edit hazard.** Do not rely on `/qa-skill-hardening` to document itself; keep this snapshot manually in sync with the installed `SKILL.md`.
-- **Hub paths are Windows-absolute** in the installed skill (`C:\Users\carucci_r\OneDrive - City of Hackensack\00_dev\ai_enhancement\...`). If the OneDrive root moves, update §7.4/§7.5 paths in the source `SKILL.md`.
+- **Hub paths are Windows-absolute** in the installed skill (the `ai_enhancement` repo — check `CLAUDE.md` for the current local path). If the OneDrive root moves, update §7.4/§7.5 paths in the source `SKILL.md`.
 
 ## Hardening
 

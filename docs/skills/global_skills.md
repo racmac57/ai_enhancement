@@ -13,10 +13,9 @@ All skills available in R. Carucci's Claude Code environment, organized by scope
 | **qa-skill-hardening** | `/qa-skill-hardening [target]` | Automated QA testing of skills/scripts |
 | **frontend-slides** | `/frontend-slides` | HTML presentations from scratch or PPT |
 | **chunk-chat** | `/chunk-chat [file]` | Chunk conversations for RAG ingestion |
-| **validate-data** | `/validate-data` | Data quality checks on Excel/CSV files |
-| **html-report** | `/html-report` | HPD-branded self-contained HTML reports |
+| **data-validation** | `/data-validation` | Data quality checks on Excel/CSV files |
+| **html-report** | `/html-report` | HPD-branded self-contained HTML reports |h
 | **check-paths** | `/check-paths` | Scan for path hygiene issues in scripts |
-| **new-etl** | `/new-etl Project_Name` | Scaffold a new ETL pipeline |
 | **etl-pipeline** | `/etl-pipeline` | Standard ETL workflow / load patterns for CAD, RMS, Arrests, Summons |
 | **frontend-design** | `/frontend-design` | Distinctive production-grade UI |
 | **claude-api** | `/claude-api` | Build/debug Claude API apps |
@@ -49,7 +48,6 @@ All skills available in R. Carucci's Claude Code environment, organized by scope
 ### 1. /qa-skill-hardening
 
 **Location:** `~/.claude/skills/qa-skill-hardening/SKILL.md`
-**Also at:** `ai_enhancement/.claude/skills/qa-skill-hardening/SKILL.md` (hardened copy)
 **Type:** Multi-agent orchestrator (write-capable)
 
 #### What It Does
@@ -206,22 +204,15 @@ The skill enforces a specific naming convention for the exported transcript file
 
 ---
 
-### 4. /data-validation and /validate-data
+### 4. /data-validation
 
-Two related global artifacts cover the same domain:
 
-| Invocation | Source file | Form |
-|------------|-------------|------|
-| `/data-validation` | `~/.claude/skills/data-validation/SKILL.md` | SKILL.md with YAML frontmatter (descriptive) |
-| `/validate-data` | `~/.claude/commands/validate-data.md` | Command-style (numbered steps, no frontmatter) |
 
-Both run **standard data quality checks** against an Excel or CSV file with rules tuned to HPD's data domain (CAD, RMS, NIBRS). Use whichever invocation you prefer; they describe the same workflow.
 
 #### How to Use
 
 ```
-/data-validation        # SKILL form
-/validate-data          # command form
+/data-validation
 ```
 
 Then provide the file path when prompted.
@@ -264,7 +255,7 @@ Per-skill how-to: [how_to/data-validation.md](how_to/data-validation.md).
 
 ### 5. /html-report
 
-**Location:** `~/.claude/commands/html-report.md` and `~/.claude/skills/html-report.md`
+**Location:** `~/.claude/skills/html-report/SKILL.md`
 **Type:** Write (generates HTML file)
 
 #### What It Does
@@ -327,40 +318,10 @@ Runs automatically against the current working directory.
 
 ---
 
-### 7. /new-etl
-
-**Location:** `~/.claude/commands/new-etl.md`
-**Type:** Write (scaffolds files)
-
-#### What It Does
-
-Scaffolds a new ETL pipeline project with the correct directory structure, imports, and configuration stubs.
-
-#### How to Use
-
-```
-/new-etl Traffic_Stops
-```
-
-#### What Gets Created
-
-```
-02_ETL_Scripts/Traffic_Stops/
-  traffic_stops_etl.py    # Main script with pathlib, pandas, path_config
-  config.yaml             # Input/output paths, sheet_name, delimiters
-  README.md               # Purpose, inputs, outputs, how to run
-  .gitignore              # __pycache__/, *.pyc, data/, output/
-```
-
-#### Built-In Rules
-
-- Uses `get_onedrive_root()` from shared `path_config` for path resolution
-- Forces `dtype={'ReportNumberNew': str}` when applicable
-- Never uses `RobertCarucci` - always `carucci_r` or `path_config`
 
 ---
 
-### 8. /frontend-design
+### 7. /frontend-design
 
 **Location:** Plugin (`claude-plugins-official/frontend-design`)
 **Type:** Write (generates UI code)
@@ -391,7 +352,7 @@ Working code in HTML/CSS/JS, React, Vue, or whatever framework fits the project.
 
 ---
 
-### 9. /claude-api
+### 8. /claude-api
 
 **Type:** Built-in skill
 
@@ -407,7 +368,7 @@ Helps build, debug, and optimize applications that use the Claude API or Anthrop
 
 ---
 
-### 10. /simplify
+### 9. /simplify
 
 **Type:** Built-in skill
 
@@ -425,7 +386,7 @@ Best used after making changes to code, before committing.
 
 ---
 
-### 11. /etl-pipeline
+### 10. /etl-pipeline
 
 **Location:** `C:\Users\carucci_r\.claude\skills\etl-pipeline\SKILL.md`
 **Type:** Read-only guidance (no executable code)
@@ -440,8 +401,6 @@ Guides building and modifying ETL scripts for law enforcement data (CAD, RMS, Ar
 - Authoring a new ETL script or modifying an existing one under `02_ETL_Scripts/`.
 - A load is about to touch an Excel file containing case-number columns (`ReportNumberNew`, `ComplaintNum`, etc.) where leading-zero preservation matters.
 - You need a quick reminder of the canonical pipeline shape before writing new code.
-
-Pairs naturally with `/new-etl` (scaffold first, then follow `/etl-pipeline` for the code inside).
 
 #### How to Use
 
@@ -465,7 +424,7 @@ No files. Returns the 6-step pipeline shape:
 
 - Always force `dtype={"ReportNumberNew": str}` when reading Excel; otherwise leading zeros in `YY-NNNNNN` case numbers are silently lost.
 - The guidance lists `pandas, openpyxl, pathlib, PyYAML`. In ArcGIS Pro environments use `/arcgis-pro` instead — PyYAML is not available and `scratchGDB`, not `memory`, is the correct workspace.
-- `path_config.py` is a convention (per `CLAUDE.md`), not a shared deployed module. `/new-etl` scaffolds the helper; otherwise you may need to author it at the top of a new project.
+- `path_config.py` is a convention (per `CLAUDE.md`), not a shared deployed module. Author it at the top of a new project.
 - Skill description currently names CAD/RMS/Arrests/Summons; NIBRS and Clery pipelines follow the same shape even though they are not enumerated.
 
 ---
@@ -1198,15 +1157,10 @@ Final recommendation: **PUBLISH** / **REVIEW BEFORE PUBLISHING** / **DO NOT PUBL
 
 | Location | Scope | Contents |
 |----------|-------|----------|
-| `~/.claude/skills/` | Global (all projects) | frontend-slides, chunk-chat, qa-skill-hardening, html-report, hpd-exec-comms, … |
-| `~/.claude/commands/` | Global (all projects) | validate-data, html-report, check-paths, new-etl |
-| `~/.claude/plugins/` | Global (marketplace) | frontend-design |
-| `ai_enhancement/.claude/skills/` | ai_enhancement only | qa-skill-hardening (hardened copy) |
+| `~/.claude/skills/` | Global (all projects) | qa-skill-hardening, frontend-slides, chunk-chat, data-validation, html-report, check-paths, etl-pipeline, arcgis-pro, hpd-exec-comms |
 | `cad_rms_data_quality/.claude/skills/` | cad_rms_data_quality only | check-paths, consolidation-run, deploy-script, handoff, pipeline-status, validate-monthly |
 
 **Skills** (`SKILL.md` with YAML frontmatter) support `allowed-tools`, `effort`, `argument-hint`, and `disable-model-invocation`.
-
-**Commands** (`~/.claude/commands/*.md`) are simpler markdown files without frontmatter.
 
 ---
 
@@ -1214,7 +1168,7 @@ Final recommendation: **PUBLISH** / **REVIEW BEFORE PUBLISHING** / **DO NOT PUBL
 
 - **Run `/qa-skill-hardening` against any project** to validate all its skills and scripts before deploying
 - **Use `/check-paths` regularly** after editing ETL scripts to catch path hygiene regressions
-- **Force `ReportNumberNew` to string** on every Excel load - this is enforced by `/validate-data` and should be in every ETL script
+- **Force `ReportNumberNew` to string** on every Excel load - this is enforced by `/data-validation` and should be in every ETL script
 - **HTML reports must be self-contained** - no external dependencies unless explicitly requested
 - **Skill names use lowercase-with-hyphens**, skill files are always `SKILL.md` (uppercase)
 - **`/consolidation-run --dry-run` first** before running a full consolidation to catch config issues
