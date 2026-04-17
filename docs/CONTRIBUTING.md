@@ -79,6 +79,16 @@ Users invoke with `/analyze src/utils` and Claude receives the path.
 - [ ] Added an entry to `CHANGELOG.md`
 - [ ] Updated the skill table in `README.md`
 
+## Central skills catalog (`docs/skills/`)
+
+After a skill is stable, it belongs in the **machine-wide reference hub**:
+
+- [docs/skills/README.md](docs/skills/README.md) — purpose of the catalog
+- [docs/skills/SKILLS_INDEX.md](docs/skills/SKILLS_INDEX.md) — paths to every `SKILL.md`, links to per-skill how-tos
+- [docs/skills/how_to/](docs/skills/how_to/) — one markdown per skill (filled by `/qa-skill-hardening` Phase 7 on 9/9 PASS)
+
+You do **not** copy `SKILL.md` into this repo; you keep the index and how-tos in sync when hardening completes.
+
 ## Validating Your Skill
 
 Run the QA hardening swarm against your new skill:
@@ -87,7 +97,7 @@ Run the QA hardening swarm against your new skill:
 /qa-skill-hardening my-new-skill
 ```
 
-This will run the 9-step binary test framework and produce a scorecard in `docs/skill_memory/my-new-skill_MEMORY.md`.
+This will run the 9-step binary test framework and produce a scorecard in `docs/skill_memory/my-new-skill_MEMORY.md`. On **9/9 PASS**, Phase 7 updates `docs/skills/` (aggregated guides, `SKILLS_INDEX.md`, and `docs/skills/how_to/<skill-name>.md`).
 
 ## Installing Globally
 
