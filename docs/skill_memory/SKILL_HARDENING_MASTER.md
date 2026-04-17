@@ -4,6 +4,8 @@
 ## Target: `~/.claude/skills/` (user-level skills)
 ## Scope: 6 skills (qa-skill-hardening excluded - already 9/9 PASS)
 
+**Update 2026-04-17:** `standardize-m-code` (Workbook_Redesign global skill) hardened in isolation — see [standardize-m-code_MEMORY.md](standardize-m-code_MEMORY.md). **`run-mva-etl`** — see [run-mva-etl_MEMORY.md](run-mva-etl_MEMORY.md).
+
 ## Global Status Table
 
 | Skill | T1 | T2 | T3 | T4 | T5 | T6 | T7 | T8 | T9 | Score | Status |
@@ -14,6 +16,8 @@
 | html-report | 1 | 1 | 1 | 1 | 1 | 1 | 1 | 1 | 1 | 9/9 | PASS |
 | frontend-slides | 1 | 1 | 1 | 1 | 1 | 1 | 1 | 0 | 1 | 8/9 | BLOCKED |
 | chunk-chat | 1 | 1 | 1 | 1 | 1 | 1 | 1 | 1 | 1 | 9/9 | PASS |
+| standardize-m-code | 1 | 1 | 1 | 1 | 1 | 1 | 1 | 1 | 1 | 9/9 | PASS |
+| run-mva-etl | 1 | 1 | 1 | 1 | 1 | 1 | 1 | 1 | 1 | 9/9 | PASS |
 
 ## Test Legend
 
@@ -58,3 +62,14 @@ No shared write targets between skills. No circular dependencies.
 |------|----------|------------|
 | frontend-slides description >250 chars | Low | Third-party repo; does not affect functionality. Monitor for upstream fix. |
 | chunk-chat $HOME expansion on Windows | Low | `$HOME` expands correctly in Git Bash / WSL. In PowerShell, use `$env:USERPROFILE`. Claude adapts the command to the active shell. |
+
+---
+
+## Run Date: 2026-04-17
+## Target: `apply-s2-s3-s4` (global, `~/.claude/skills/`)
+
+| Skill | T1 | T2 | T3 | T4 | T5 | T6 | T7 | T8 | T9 | Score | Status |
+|-------|----|----|----|----|----|----|----|----|-----|-------|--------|
+| apply-s2-s3-s4 | 1 | 1 | 1 | 1 | 1 | 1 | 1 | 1 | 1 | 9/9 | PASS |
+
+**Notes:** Procedural Workbook_Redesign_2026 skill. `mva_crash_etl.py` / `standardize_m_code.py` are project-relative to Workbook_Redesign_2026, not `ai_enhancement`. See `apply-s2-s3-s4_MEMORY.md`.

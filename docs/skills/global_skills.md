@@ -22,6 +22,7 @@ All skills available in R. Carucci's Claude Code environment, organized by scope
 | **claude-api** | `/claude-api` | Build/debug Claude API apps |
 | **simplify** | `/simplify` | Review changed code for quality |
 | **hpd-exec-comms** | `/hpd-exec-comms` | HPD/SSOCC executive communications — formal polish for internal, command, or descriptive outputs |
+| **standardize-m-code** | `/standardize-m-code` | Workbook_Redesign: wrap `standardize_m_code.py` with `--target-dir 02_Legacy_M_Code` (dry-run before apply) |
 
 ### Project Skills (cad_rms_data_quality only)
 
@@ -458,6 +459,45 @@ No files. Returns the 6-step pipeline shape:
 - The guidance lists `pandas, openpyxl, pathlib, PyYAML`. In ArcGIS Pro environments use `/arcgis-pro` instead — PyYAML is not available and `scratchGDB`, not `memory`, is the correct workspace.
 - `path_config.py` is a convention (per `CLAUDE.md`), not a shared deployed module. `/new-etl` scaffolds the helper; otherwise you may need to author it at the top of a new project.
 - Skill description currently names CAD/RMS/Arrests/Summons; NIBRS and Clery pipelines follow the same shape even though they are not enumerated.
+
+---
+
+### 11a. /standardize-m-code (Workbook_Redesign_2026)
+
+**Location:** `C:\Users\carucci_r\.claude\skills\standardize-m-code\SKILL.md`  
+**Type:** Read-only guidance (invokes `standardize_m_code.py` when you run the documented commands)  
+**Per-skill reference:** [how_to/standardize-m-code.md](how_to/standardize-m-code.md)
+
+#### What It Does
+
+Documents the safe invocation of `standardize_m_code.py`: always pass `--target-dir 02_Legacy_M_Code` so the script never falls back to its hardcoded legacy Windows OneDrive default. Covers dry-run review, explicit `--apply`, S2/S3/S4 / Crime Analysis cleanup expectations, and post-apply `git diff`.
+
+#### When to Use It
+
+- In the **Workbook_Redesign** repo after editing `.m` files under `02_Legacy_M_Code/`.
+- Before bulk standardization across many M files.
+
+#### How to Use
+
+```
+/standardize-m-code
+```
+
+From repo root (adjust `cd` on Windows):
+
+```bash
+python standardize_m_code.py --target-dir 02_Legacy_M_Code
+python standardize_m_code.py --target-dir 02_Legacy_M_Code --apply   # only after review
+```
+
+#### Output
+
+Stdout diffs; with `--apply`, modified `.m` files. See the how-to for full patterns.
+
+#### Gotchas
+
+- Must be run with **Workbook_Redesign** as the working tree — not `00_dev` / SCRPA.
+- Do not omit `--target-dir 02_Legacy_M_Code`.
 
 ---
 
