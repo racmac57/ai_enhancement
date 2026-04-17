@@ -23,10 +23,12 @@
 | html-report | `C:\Users\carucci_r\.claude\skills\html-report\SKILL.md` | [how_to/html-report.md](how_to/html-report.md) | [global_skills.md](global_skills.md) | Generate HPD-branded, self-contained HTML reports |
 | check-paths | `C:\Users\carucci_r\.claude\skills\check-paths\SKILL.md` | [how_to/check-paths.md](how_to/check-paths.md) | [global_skills.md](global_skills.md) | Scan a project for path-hygiene issues in scripts and configs |
 | etl-pipeline | `C:\Users\carucci_r\.claude\skills\etl-pipeline\SKILL.md` | [how_to/etl-pipeline.md](how_to/etl-pipeline.md) | [global_skills.md](global_skills.md) | Standard ETL workflow for CAD/RMS/Arrests/Summons pipelines under 02_ETL_Scripts |
-| frontend-design | `C:\Users\carucci_r\.claude\skills\frontend-design\SKILL.md` | [how_to/frontend-design.md](how_to/frontend-design.md) | [global_skills.md](global_skills.md) | Produce distinctive, production-grade UI designs |
-| claude-api | `C:\Users\carucci_r\.claude\skills\claude-api\SKILL.md` | [how_to/claude-api.md](how_to/claude-api.md) | [global_skills.md](global_skills.md) | Build and debug Claude API applications |
-| simplify | `C:\Users\carucci_r\.claude\skills\simplify\SKILL.md` | [how_to/simplify.md](how_to/simplify.md) | [global_skills.md](global_skills.md) | Review changed code for quality and simplification opportunities |
+| frontend-design | _Cursor/Claude plugin — marketplace install (no SKILL.md on disk)_ | [how_to/frontend-design.md](how_to/frontend-design.md) | [global_skills.md](global_skills.md) | Produce distinctive, production-grade UI designs |
+| claude-api | _Built-in Claude Code skill (no repo SKILL.md)_ | [how_to/claude-api.md](how_to/claude-api.md) | [global_skills.md](global_skills.md) | Build and debug Claude API applications |
+| simplify | _Built-in Claude Code skill (no repo SKILL.md)_ | [how_to/simplify.md](how_to/simplify.md) | [global_skills.md](global_skills.md) | Review changed code for quality and simplification opportunities |
 | hpd-exec-comms | `C:\Users\carucci_r\.claude\skills\hpd-exec-comms\SKILL.md` | [how_to/hpd-exec-comms.md](how_to/hpd-exec-comms.md) | [global_skills.md](global_skills.md) | HPD / SSOCC executive communications — polish drafts into formal internal, command-staff, or descriptive outputs |
+
+> Rows marked _Built-in Claude Code skill_ or _Cursor/Claude plugin_ have **no** `SKILL.md` under `~/.claude\skills\`. They are included for discoverability; see the per-skill how-to for invocation details.
 
 ---
 
