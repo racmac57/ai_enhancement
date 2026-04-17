@@ -74,4 +74,6 @@ Additional notes:
 
 ## Hardening
 
-- **Scorecard:** After `/qa-skill-hardening` Phase 7 (9/9), evidence is written to `~/.claude/skills/docs/skill_memory/check-paths_MEMORY.md` on this machine if the run targets this skill.
+- **Scorecard:** [check-paths_MEMORY.md](../../skill_memory/check-paths_MEMORY.md)
+- **Run date:** 2026-04-17 (retroactive audit-only verification after dir-form migration `d2a5da1`)
+- **Result:** **9 / 9 PASS** — no SKILL.md changes required.

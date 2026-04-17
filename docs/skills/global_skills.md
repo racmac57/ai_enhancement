@@ -25,6 +25,10 @@ All skills available in R. Carucci's Claude Code environment, organized by scope
 | **standardize-m-code** | `/standardize-m-code` | Workbook_Redesign: wrap `standardize_m_code.py` with `--target-dir 02_Legacy_M_Code` (dry-run before apply) |
 | **apply-s2-s3-s4** | `/apply-s2-s3-s4` | Workbook_Redesign: S2/S3/S4 on a flat table (totals filter, PK dedupe, Value shim) + M snippet |
 | **run-mva-etl** | `/run-mva-etl` | Workbook_Redesign: preflight + `python mva_crash_etl.py` + post-checks; Markdown audit report |
+| **preflight-export** | `/preflight-export` | Workbook_Redesign: read-only QA gate for CAD/RMS/arrest/summons exports before ETL |
+| **clean-summons-export** | `/clean-summons-export` | Workbook_Redesign: clean monthly E-Ticket export and emit `Data_Load/summons_slim_for_powerbi.csv` for DAX joins |
+| **clean-cad-export** | `/clean-cad-export` | Workbook_Redesign: normalize CAD keys and categories, then write `_cleaned/<file>__cleaned.xlsx` with markdown diff |
+| **clean-arrest-export** | `/clean-arrest-export` | Workbook_Redesign: clean LawSoft/ATS arrest exports with totals drop, field normalization, and Race/UCR split outputs |
 | **standardize-compstat-wb** | `/standardize-compstat-wb` | Workbook_Redesign Phase 3: one legacy Compstat workbook → flat schema plan + M rewrite + macro audit |
 
 ### Project Skills (cad_rms_data_quality only)
@@ -291,8 +295,9 @@ Single `.html` file with inline `<style>`. Default output location is the curren
 
 ### 6. /check-paths (global)
 
-**Location:** `~/.claude/commands/check-paths.md`
+**Location:** `C:\Users\carucci_r\.claude\skills\check-paths\SKILL.md` (dir-form; migrated from `~/.claude/commands/check-paths.md` in commit `d2a5da1`)
 **Type:** Read-only (analysis)
+**Per-skill reference:** [how_to/check-paths.md](how_to/check-paths.md)
 
 #### What It Does
 
@@ -616,6 +621,44 @@ Supply legacy path, intended redesigned output name, and the wave inventory Mark
 
 ---
 
+### 11d. /preflight-export (Workbook_Redesign_2026)
+
+**Location:** `C:\Users\carucci_r\.claude\skills\preflight-export\SKILL.md`  
+**Type:** Read-only validation workflow (stdout Markdown report)  
+**Per-skill reference:** [how_to/preflight-export.md](how_to/preflight-export.md)
+
+#### What It Does
+
+Validates fresh export drops in `Data_Ingest/CAD_RMS_Exports/` before downstream cleanup or ETL. Checks file size/null-byte corruption, openability, header contracts, CSV delimiter drift, gotcha scans (embedded newline case numbers, `How Reported` drift, trailing whitespace, totals rows), and month-over-month row-count deltas.
+
+#### When to Use It
+
+- Before `/run-mva-etl` or direct `python mva_crash_etl.py`.
+- Before `/clean-cad-export`, `/clean-arrest-export`, or `/clean-summons-export`.
+- Immediately after receiving a new monthly CAD/RMS/arrest/e-ticket/ATS export set.
+
+#### How to Use
+
+```text
+/preflight-export
+```
+
+Optionally provide a specific file path or glob if the user wants to validate one file instead of auto-discovered latest exports.
+
+#### Output
+
+- Markdown report to stdout only; no file writes.
+- Per-file PASS/WARN/FAIL checklist and an overall recommendation with next step.
+
+#### Gotchas
+
+- E-Ticket delimiter is expected to be `;` (not `,`).
+- ATS uses a 4-row title block; header validation starts after `skiprows=4`.
+- Load case numbers as string (`ReportNumberNew`, `Control #`) to preserve leading zeros.
+- Known corrupt RMS null-byte pattern must be FAIL-and-stop, not "repair."
+
+---
+
 ### /apply-s2-s3-s4 (Workbook_Redesign — global)
 
 **Location:** `C:\Users\carucci_r\.claude\skills\apply-s2-s3-s4\SKILL.md`  
@@ -651,6 +694,118 @@ Provide: path to CSV or Excel (or an in-memory DataFrame), primary-key column na
 - Never write in place under `01_Legacy_Copies/`.
 - Large inputs (>1M rows): `apply(axis=1)` for S2 is slow — warn the user.
 - Totals label `"Total"` can over-match column text such as “Total Stops”; confirm with the user when needed.
+
+---
+
+### /clean-summons-export (Workbook_Redesign_2026)
+
+**Location:** `C:\Users\carucci_r\.claude\skills\clean-summons-export\SKILL.md`  
+**Type:** Read-mostly workflow (documents deterministic pandas cleanup and slim-output contract)  
+**Per-skill reference:** [how_to/clean-summons-export.md](how_to/clean-summons-export.md)
+
+#### What It Does
+
+Normalizes monthly E-Ticket summons exports and defines the canonical slim dataset for Power BI: parses semicolon-delimited source, strips whitespace, drops known empty columns, handles mixed date/time patterns, splits dual-purpose slash columns by `Case Type Code`, and emits `Data_Load/summons_slim_for_powerbi.csv`.
+
+#### When to Use It
+
+- Monthly summons export arrives in `Data_Ingest/CAD_RMS_Exports/`.
+- `/preflight-export` flagged a summons file for normalization.
+- You need to refresh the DAX-joined summons slim table.
+
+#### How to Use
+
+```text
+/clean-summons-export
+```
+
+Optionally provide an explicit source CSV path instead of auto-picking the latest `*eticket*.csv`.
+
+#### Output
+
+- `Data_Load/summons_slim_for_powerbi.csv` (overwrite, idempotent).
+- Console diff summary with row deltas, malformed-row warnings, trim counts, dropped columns, and P/M split counts.
+
+#### Gotchas
+
+- Delimiter is `;` (comma parse produces single-column garbage).
+- `Charge Time` is HHMM text (`0310` => `03:10`), not a native time type.
+- PII fields can exist in the source and must not appear in slim output or logs.
+- Never write to `01_Legacy_Copies/`; never restore a Summons worksheet into the Patrol workbook.
+
+---
+
+### 11e. /clean-cad-export (Workbook_Redesign_2026)
+
+**Location:** `C:\Users\carucci_r\.claude\skills\clean-cad-export\SKILL.md`  
+**Type:** Procedural data cleanup (reads source export, writes cleaned copy)  
+**Per-skill reference:** [how_to/clean-cad-export.md](how_to/clean-cad-export.md)
+
+#### What It Does
+
+Cleans raw FileMaker CAD exports before downstream ETL/join steps. It enforces string dtype on `ReportNumberNew`, strips embedded newlines from case numbers, normalizes `How Reported` variants to canonical values, trims categorical whitespace, and fixes leading `" & "` artifacts in `FullAddress2`.
+
+#### When to Use It
+
+- `/preflight-export` flags CAD quality issues.
+- You see `How Reported` variants (`emial`, `raid`, mixed casing, embedded newline).
+- Before `/run-mva-etl` or any join keyed on case number.
+
+#### How to Use
+
+```text
+/clean-cad-export
+```
+
+Default input is the latest `*CAD*.xlsx` under `Data_Ingest/CAD_RMS_Exports/`. You can provide an explicit path when needed.
+
+#### Output
+
+- `Data_Ingest/CAD_RMS_Exports/_cleaned/<original_basename>__cleaned.xlsx`
+- Markdown diff report to stdout (input/output rows, normalization counts, strip counts, output path)
+
+#### Gotchas
+
+- Never overwrite the source export.
+- Keep `HourMinuetsCalc` column name unchanged (load-bearing typo used downstream).
+- This skill does not apply S2/S3 transforms; use `/apply-s2-s3-s4` or `mva_crash_etl.py` for row-shaping logic.
+
+---
+
+### 11f. /clean-arrest-export (Workbook_Redesign_2026)
+
+**Location:** `C:\Users\carucci_r\.claude\skills\clean-arrest-export\SKILL.md`  
+**Type:** Procedural data cleanup (reads source export, writes cleaned copy)  
+**Per-skill reference:** [how_to/clean-arrest-export.md](how_to/clean-arrest-export.md)
+
+#### What It Does
+
+Cleans LawSoft (and ATS variant) arrest exports before redesign/ETL steps: applies S2 totals-row filtering, enforces string handling on `ReportNumberNew`, strips key whitespace, normalizes `Reviewed` casing, splits compound `Race` and `UCR #` values into code/description columns, drops artifact columns, and preserves source files by writing to `_cleaned/`.
+
+#### When to Use It
+
+- `/preflight-export` flags arrest-export quality issues.
+- User requests arrest cleanup or ATS arrest header normalization.
+- Before Workbook_Redesign inventory/redesign phases that depend on grouped arrest attributes.
+
+#### How to Use
+
+```text
+/clean-arrest-export
+```
+
+Default input is latest `*LawSoft*Arrest*.xlsx` under `Data_Ingest/CAD_RMS_Exports/`; ATS files (`*ATS*.xlsx`) use `skiprows=4` and footer trimming.
+
+#### Output
+
+- `Data_Ingest/CAD_RMS_Exports/_cleaned/<original_basename>__cleaned.xlsx`
+- Markdown diff report to stdout (row deltas, whitespace trims, split metrics, dropped artifact columns, PII warning)
+
+#### Gotchas
+
+- Never overwrite the source export; never write to `01_Legacy_Copies/`.
+- Do not print raw `SS#Calc` values in chat/log output.
+- Stop with an explicit error if required columns are missing (`ReportNumberNew`, `Race`, `Reviewed`, `UCR #`) or ATS header/footer parsing fails.
 
 ---
 

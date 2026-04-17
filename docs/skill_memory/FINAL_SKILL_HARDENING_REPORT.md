@@ -108,6 +108,19 @@ See `docs/skill_memory/GIT_COMMIT_LOG.md` for commit details.
 
 ---
 
+## Addendum: 2026-04-17 — `clean-cad-export`
+
+| Metric | Value |
+|--------|-------|
+| Skill | `clean-cad-export` |
+| Score | 9/9 PASS |
+| Fix | No source fix required; skill already compliant with path safety, output contract, and frontmatter rules |
+| Evidence | `clean-cad-export_MEMORY.md` |
+
+**Note:** This run hardened the skill specification in place (static + rule-compliance validation). It did not execute a real CAD workbook transformation from Workbook_Redesign_2026 in this workspace.
+
+---
+
 ## Addendum: 2026-04-17 — `clean-summons-export`
 
 | Metric | Value |
@@ -131,3 +144,29 @@ See `docs/skill_memory/GIT_COMMIT_LOG.md` for commit details.
 | Evidence | `standardize-compstat-wb_MEMORY.md` |
 
 **Note:** End-to-end Excel/PQ redesign was not executed from `ai_enhancement`; `Claude.md` was verified at `Workbook_Redesign_2026` on disk for cross-reference checks.
+
+---
+
+## Addendum: 2026-04-17 — `preflight-export`
+
+| Metric | Value |
+|--------|-------|
+| Skill | `preflight-export` |
+| Score | 9/9 PASS |
+| Fix | No SKILL.md change required; validated frontmatter, read-only contract, header/delimiter/gotcha checks, and downstream integration markers |
+| Evidence | `preflight-export_MEMORY.md` |
+
+**Note:** Full export probing was not executed from this workspace; hardening was performed as static/rule compliance validation with captured command evidence.
+
+---
+
+## Addendum: 2026-04-17 — `clean-arrest-export`
+
+| Metric | Value |
+|--------|-------|
+| Skill | `clean-arrest-export` |
+| Score | 9/9 PASS |
+| Fix | Added `Repository context` and explicit `Failure modes` to `~/.claude/skills/clean-arrest-export/SKILL.md` |
+| Evidence | `clean-arrest-export_MEMORY.md` |
+
+**Note:** Executed fixture-based transformation checks (totals drop, reviewer normalization, split-column creation, Int64 coercion). Full workbook run in Workbook_Redesign_2026 was not executed from this workspace.

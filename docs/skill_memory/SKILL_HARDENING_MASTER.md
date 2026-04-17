@@ -4,7 +4,9 @@
 ## Target: `~/.claude/skills/` (user-level skills)
 ## Scope: 6 skills (qa-skill-hardening excluded - already 9/9 PASS)
 
-**Update 2026-04-17:** `standardize-m-code` — [standardize-m-code_MEMORY.md](standardize-m-code_MEMORY.md). **`run-mva-etl`** — [run-mva-etl_MEMORY.md](run-mva-etl_MEMORY.md). **`apply-s2-s3-s4`** — [apply-s2-s3-s4_MEMORY.md](apply-s2-s3-s4_MEMORY.md). **`inventory-wave`** — [inventory-wave_MEMORY.md](inventory-wave_MEMORY.md). **`clean-summons-export`** — [clean-summons-export_MEMORY.md](clean-summons-export_MEMORY.md). **`standardize-compstat-wb`** — [standardize-compstat-wb_MEMORY.md](standardize-compstat-wb_MEMORY.md).
+**Update 2026-04-17:** `standardize-m-code` — [standardize-m-code_MEMORY.md](standardize-m-code_MEMORY.md). **`run-mva-etl`** — [run-mva-etl_MEMORY.md](run-mva-etl_MEMORY.md). **`apply-s2-s3-s4`** — [apply-s2-s3-s4_MEMORY.md](apply-s2-s3-s4_MEMORY.md). **`inventory-wave`** — [inventory-wave_MEMORY.md](inventory-wave_MEMORY.md). **`clean-summons-export`** — [clean-summons-export_MEMORY.md](clean-summons-export_MEMORY.md). **`clean-arrest-export`** — [clean-arrest-export_MEMORY.md](clean-arrest-export_MEMORY.md). **`standardize-compstat-wb`** — [standardize-compstat-wb_MEMORY.md](standardize-compstat-wb_MEMORY.md). **`preflight-export`** — [preflight-export_MEMORY.md](preflight-export_MEMORY.md).
+
+**Audit-only verification 2026-04-17:** Retroactive scorecard added for `check-paths` after dir-form migration (`d2a5da1`) — [check-paths_MEMORY.md](check-paths_MEMORY.md). No SKILL.md changes. Closes documentation gap in hub coverage.
 
 ## Global Status Table
 
@@ -21,7 +23,11 @@
 | apply-s2-s3-s4 | 1 | 1 | 1 | 1 | 1 | 1 | 1 | 1 | 1 | 9/9 | PASS |
 | inventory-wave | 1 | 1 | 1 | 1 | 1 | 1 | 1 | 1 | 1 | 9/9 | PASS |
 | clean-summons-export | 1 | 1 | 1 | 1 | 1 | 1 | 1 | 1 | 1 | 9/9 | PASS |
+| clean-arrest-export | 1 | 1 | 1 | 1 | 1 | 1 | 1 | 1 | 1 | 9/9 | PASS |
 | standardize-compstat-wb | 1 | 1 | 1 | 1 | 1 | 1 | 1 | 1 | 1 | 9/9 | PASS |
+| clean-cad-export | 1 | 1 | 1 | 1 | 1 | 1 | 1 | 1 | 1 | 9/9 | PASS |
+| preflight-export | 1 | 1 | 1 | 1 | 1 | 1 | 1 | 1 | 1 | 9/9 | PASS |
+| check-paths | 1 | 1 | 1 | 1 | 1 | 1 | 1 | 1 | 1 | 9/9 | PASS |
 
 ## Test Legend
 

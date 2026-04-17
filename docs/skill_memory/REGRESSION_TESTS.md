@@ -71,6 +71,27 @@ No regressions detected. All previously-passing tests maintained PASS status aft
 
 ---
 
+## clean-cad-export (2026-04-17)
+
+**Markers**
+
+1. `SKILL.md` YAML parses with `name: clean-cad-export` and `description` length <= 250.
+2. Output contract remains unchanged: write cleaned export under `Data_Ingest/CAD_RMS_Exports/_cleaned/` and emit markdown diff report.
+3. Hard rule present: never overwrite the source CAD export in place.
+
+**Automated checks**
+
+1. `python -c` frontmatter parse and rule scan of `~/.claude/skills/clean-cad-export/SKILL.md`.
+2. Related-skill dependency check: `preflight-export`, `run-mva-etl`, `apply-s2-s3-s4`, `clean-arrest-export` all resolve to existing `SKILL.md`.
+
+**Regression matrix**
+
+| Skill | Pre-Hardening Score | Post-Hardening Score | Delta | Regressions |
+|-------|--------------------|--------------------|-------|-------------|
+| clean-cad-export | n/a (first hub pass) | 9/9 | - | 0 |
+
+---
+
 ## clean-summons-export (2026-04-17)
 
 **Markers**
@@ -109,3 +130,45 @@ No regressions detected. All previously-passing tests maintained PASS status aft
 | Skill | Pre-Hardening Score | Post-Hardening Score | Delta | Regressions |
 |-------|--------------------|--------------------|-------|-------------|
 | standardize-compstat-wb | n/a (first hub pass) | 9/9 | — | 0 |
+
+---
+
+## preflight-export (2026-04-17)
+
+**Markers**
+
+1. `SKILL.md` YAML present with `name: preflight-export`; description length <= 250.
+2. Read-only contract is explicit: "Emit a Markdown report to stdout. Do NOT write any files. Do NOT modify exports."
+3. Header contracts include key fields for CAD, timereport, arrest, e-ticket, ATS header-offset handling.
+
+**Automated checks**
+
+1. `python -c` with `yaml.safe_load` on `~/.claude/skills/preflight-export/SKILL.md` frontmatter (must not raise).
+2. Marker scan confirms no missing required schema/dependency markers.
+
+**Regression matrix**
+
+| Skill | Pre-Hardening Score | Post-Hardening Score | Delta | Regressions |
+|-------|--------------------|--------------------|-------|-------------|
+| preflight-export | n/a (first hub pass) | 9/9 | — | 0 |
+
+---
+
+## clean-arrest-export (2026-04-17)
+
+**Markers**
+
+1. `SKILL.md` YAML present with `name: clean-arrest-export`; description length <= 250.
+2. Output contract remains `_cleaned/<basename>__cleaned.xlsx` and markdown diff report to stdout.
+3. Required transformations remain explicit: S2 totals filter, `Race` split, `UCR #` split, `Reviewed` normalization, `ReportNumberNew` newline strip.
+
+**Automated checks**
+
+1. `python -c` frontmatter parse and path-safety scan of `~/.claude/skills/clean-arrest-export/SKILL.md`.
+2. Pandas fixture transform check: totals row dropped, reviewer normalized to `BRIGGS_S`, split columns created, `Place of Arrest StNumber` coerced to `Int64`.
+
+**Regression matrix**
+
+| Skill | Pre-Hardening Score | Post-Hardening Score | Delta | Regressions |
+|-------|--------------------|--------------------|-------|-------------|
+| clean-arrest-export | n/a (first hub pass) | 9/9 | — | 0 |
