@@ -32,7 +32,7 @@ Split conversations into fixed-size, sentence-boundary chunks for RAG ingestion 
 /chunk-chat ./logs/session.txt --chunk-size=1200 --overlap=80
 ```
 
-If no file path is supplied, the skill reconstructs the conversation from its context window, writes it to the real Windows temp directory (resolved via `python -c "import tempfile; print(tempfile.gettempdir())"` — **not** `/tmp/`), invokes the chunker, and cleans up the temp file.
+If no file path is supplied, the skill reconstructs the conversation from its context window **as an in-memory string** and pipes it directly to `chat_chunker.py` via stdin (invoked with `-` as the input argument and `--name=<Topic_Description>_Claude` to set the output folder stem). No temp file is written, created, or deleted — the refactor was specifically made to eliminate the two Cursor permission prompts that the old temp-file workflow triggered.
 
 ## Output / artifacts
 
@@ -53,9 +53,10 @@ Override the destination by passing an explicit output dir as the second positio
 - **Chunk size vs. overlap.** Smaller chunks improve retrieval precision but inflate vector-store size. Defaults (`~800` / `50`) match `chunker_web` and the Enterprise Chunker watcher — only override via `--chunk-size=` / `--overlap=` if you have a concrete reason.
 - **Deterministic IDs.** Chunk filenames are indexed (`chunk_00000` ...) inside a folder keyed by topic + timestamp, so re-running on the same conversation creates a **new** folder rather than overwriting; downstream vector stores will treat a re-run as new chunks. Do incremental updates by chunking only new transcript deltas.
 - **Topic label.** If `$ARGUMENTS` is a topic rather than a path, use 4–8 Title_Case words per the AI Suffix Naming Convention; the skill always appends `_Claude`.
-- **Context compression.** If earlier turns were summarized out of context, the skill stamps a `[Note]: Earlier portions of this conversation were summarized...` header on the temp file — treat those chunks as lossy and do not rely on them for verbatim recall.
+- **Context compression.** If earlier turns were summarized out of context, the skill prepends a `[Note]: Earlier portions of this conversation were summarized...` header to the in-memory transcript string before piping to the chunker — treat those chunks as lossy and do not rely on them for verbatim recall.
 - **Chunking strategy.** Despite the 2.0 framing, the implementation is **sentence-boundary splitting** at a fixed char budget with overlap — not embedding-based semantic clustering. Plan retrieval strategy accordingly.
 
 ## Hardening
 
-- Last hardened during the 2026-04-10 dual-session blitz (`HANDOFF_20260410_Skill_Hardening_Final.md`) — Windows temp-dir fix, `python3`→`python`, sidecar schema aligned with Enterprise Chunker (`source_type`, `language`, `enrichment_version`). Re-run `/qa-skill-hardening chunk-chat` to refresh the scorecard at `~/.claude/skills/docs/skill_memory/chunk-chat_MEMORY.md` when generated.
+- **2026-04-19 pass — 9/9 PASS.** Replaced temp-file workflow with stdin piping (no filesystem writes for the transcript) to eliminate two Cursor permission prompts per run. Live hardening also caught and fixed a latent `UnboundLocalError` in `chat_chunker.py:269` where `src.name` was still referenced in the transcript header after the stdin/file branch split. Scorecard, evidence log, and regression tests in `C:\Users\carucci_r\.claude\docs\skill_memory\chunk-chat_MEMORY.md` and `REGRESSION_TESTS.md`.
+- 2026-04-10 dual-session blitz (`HANDOFF_20260410_Skill_Hardening_Final.md`) — Windows temp-dir fix (pre-stdin-refactor), `python3`→`python`, sidecar schema aligned with Enterprise Chunker (`source_type`, `language`, `enrichment_version`).
