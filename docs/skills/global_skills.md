@@ -29,6 +29,7 @@ All skills available in R. Carucci's Claude Code environment, organized by scope
 | **clean-cad-export** | `/clean-cad-export` | Workbook_Redesign: normalize CAD keys and categories, then write `_cleaned/<file>__cleaned.xlsx` with markdown diff |
 | **clean-arrest-export** | `/clean-arrest-export` | Workbook_Redesign: clean LawSoft/ATS arrest exports with totals drop, field normalization, and Race/UCR split outputs |
 | **standardize-compstat-wb** | `/standardize-compstat-wb` | Workbook_Redesign Phase 3: one legacy Compstat workbook → flat schema plan + M rewrite + macro audit |
+| **session-handoff** | `/session-handoff` | Two-part SESSION HANDOFF DOCUMENT for the next chat (OPENING PROMPT blockquote + HANDOFF BODY with status/decisions/artifacts/next action) |
 
 ### Project Skills (cad_rms_data_quality only)
 
@@ -844,6 +845,82 @@ Structured written output per selected format; see `SKILL.md` for signature bloc
 - Do **not** trigger when the request is generic polish without HPD/SSOCC scope.
 - Do **not** use for press releases.
 - Ambiguous inputs: clarify audience and format before drafting.
+
+---
+
+### 13. /session-handoff
+
+**Location:** `C:\Users\carucci_r\.claude\skills\session-handoff\SKILL.md`
+**Type:** Global, read-only (prose-only skill; no filesystem writes)
+**Per-skill reference:** [how_to/session-handoff.md](how_to/session-handoff.md)
+
+#### What It Does
+
+Generates a **two-part SESSION HANDOFF DOCUMENT** for the next Claude chat:
+
+1. **OPENING PROMPT** — a plain-Markdown heading plus a GFM blockquote
+   containing identity (`#261`, Principal Analyst, SSOCC), the active domains
+   actually discussed this session, the tech stack actually mentioned this
+   session, audience (command staff vs unknown), and the 7 verbatim behavioral
+   directives (output-first, no filler, mentor challenge, etc.).
+2. **HANDOFF BODY** — PROJECT / TASK, SESSION METADATA (always emitted),
+   STATUS, KEY DECISIONS (with a `Rejected:` sub-block), ARTIFACTS,
+   CRITICAL CONTEXT (Category: detail form), OPEN QUESTIONS / BLOCKERS,
+   NEXT BEST ACTION (one item only), ENVIRONMENT SNAPSHOT.
+
+Includes conflict-resolution-first scan, PII guardrails, strict nil-state
+clauses for every optional field, and a word-count ceiling (≤900 standard,
+1,400 absolute) that compresses CRITICAL CONTEXT / STATUS before truncating
+ARTIFACTS or NEXT BEST ACTION.
+
+#### When to Use It
+
+- End-of-session wrap-up for a long / complex chat.
+- You want a clean first-message primer to paste into the next session.
+- Capturing decisions, rejected options, and the single best resume point
+  before context is lost.
+- Trigger phrases: `handoff`, `continuity`, `next session`, `wrap up`,
+  `summarize for next chat`, `I'm done for today`, `closing out`.
+
+#### How to Use
+
+```text
+/session-handoff
+```
+
+No arguments. The skill reviews the **entire current conversation** and emits
+one Markdown document; paste the whole document as the first message of the
+next session.
+
+#### Output
+
+A single Markdown document containing:
+
+- Plain `## OPENING PROMPT — PASTE AS FIRST MESSAGE` heading (not inside the blockquote).
+- A GFM blockquote with Role / Active domains / Tech stack / Audience /
+  Behavioral directives.
+- One horizontal rule.
+- HANDOFF BODY sections (SESSION METADATA is always present; omit subsections
+  with nothing to report, but never omit ARTIFACTS — emit
+  `No artifacts this session.` instead).
+
+#### Gotchas
+
+- **Evidence-only tech stack.** Do not infer from CLAUDE.md, repo state, or
+  general knowledge unless the user pasted that material into this chat.
+- **Badge pinning.** `#261` must appear in exactly 2 places in SKILL.md
+  (task header + blockquote Role line). A third occurrence, or any `#241` /
+  similar, is a regression.
+- **Conflict resolution first.** The skill scans for contradictory
+  instructions before writing; use the latest stated position and flag
+  lingering conflicts with ⚠️. Never silently reconcile.
+- **PII pass.** Passwords / API keys / connection strings →`[REDACTED]`;
+  case numbers / badges / subject-identifying detail →`[REVIEW BEFORE SHARING]`;
+  internal hosts / IPs →`[REVIEW BEFORE SHARING]`. Flagged, never silently deleted.
+- **One-item NEXT BEST ACTION.** No sub-bullets, no secondary suggestions. If
+  multiple actions are critical, demote the rest to OPEN QUESTIONS / BLOCKERS.
+- **Trivial / empty conversation.** Say so in PROJECT / TASK in one line and
+  omit every other subsection (SESSION METADATA still emits).
 
 ---
 
