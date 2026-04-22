@@ -29,7 +29,7 @@ All skills available in R. Carucci's Claude Code environment, organized by scope
 | **clean-cad-export** | `/clean-cad-export` | Workbook_Redesign: normalize CAD keys and categories, then write `_cleaned/<file>__cleaned.xlsx` with markdown diff |
 | **clean-arrest-export** | `/clean-arrest-export` | Workbook_Redesign: clean LawSoft/ATS arrest exports with totals drop, field normalization, and Race/UCR split outputs |
 | **standardize-compstat-wb** | `/standardize-compstat-wb` | Workbook_Redesign Phase 3: one legacy Compstat workbook → flat schema plan + M rewrite + macro audit |
-| **session-handoff** | `/session-handoff` | Two-part SESSION HANDOFF DOCUMENT for the next chat (OPENING PROMPT blockquote + HANDOFF BODY with status/decisions/artifacts/next action) |
+| **session-handoff** | `/session-handoff` (or "handoff", "wrap up", "I'm done for today") | Render a two-part session handoff (OPENING PROMPT + HANDOFF BODY) and archive it under `00_dev/handoffs/` for next-session continuity |
 
 ### Project Skills (cad_rms_data_quality only)
 
@@ -851,76 +851,49 @@ Structured written output per selected format; see `SKILL.md` for signature bloc
 ### 13. /session-handoff
 
 **Location:** `C:\Users\carucci_r\.claude\skills\session-handoff\SKILL.md`
-**Type:** Global, read-only (prose-only skill; no filesystem writes)
+**Type:** Write-capable (renders Markdown + archives to `00_dev/handoffs/`)
 **Per-skill reference:** [how_to/session-handoff.md](how_to/session-handoff.md)
 
 #### What It Does
 
-Generates a **two-part SESSION HANDOFF DOCUMENT** for the next Claude chat:
+Reads the entire current conversation and produces a single Markdown document with two parts:
 
-1. **OPENING PROMPT** — a plain-Markdown heading plus a GFM blockquote
-   containing identity (`#261`, Principal Analyst, SSOCC), the active domains
-   actually discussed this session, the tech stack actually mentioned this
-   session, audience (command staff vs unknown), and the 7 verbatim behavioral
-   directives (output-first, no filler, mentor challenge, etc.).
-2. **HANDOFF BODY** — PROJECT / TASK, SESSION METADATA (always emitted),
-   STATUS, KEY DECISIONS (with a `Rejected:` sub-block), ARTIFACTS,
-   CRITICAL CONTEXT (Category: detail form), OPEN QUESTIONS / BLOCKERS,
-   NEXT BEST ACTION (one item only), ENVIRONMENT SNAPSHOT.
+1. **OPENING PROMPT** — a blockquoted context primer the next session pastes as its first message (role, active domains, tech stack discussed this session, audience, session-specific behavioral deviations from CLAUDE.md).
+2. **HANDOFF BODY** — structured state: PROJECT/TASK, SESSION METADATA (Generated, Handoff version, Supersedes for v2+), STATUS, KEY DECISIONS (with Rejected sub-section), ARTIFACTS, CRITICAL CONTEXT, OPEN QUESTIONS / BLOCKERS, NEXT BEST ACTION, ENVIRONMENT SNAPSHOT.
 
-Includes conflict-resolution-first scan, PII guardrails, strict nil-state
-clauses for every optional field, and a word-count ceiling (≤900 standard,
-1,400 absolute) that compresses CRITICAL CONTEXT / STATUS before truncating
-ARTIFACTS or NEXT BEST ACTION.
+A pre-flight pass runs first: scans for prior handoffs in the conversation (bumps version + writes delta only), captures git state if the session touched a repo (`git rev-parse --abbrev-ref HEAD`, `git log --oneline -5`, `git status --short`), and resolves all relative dates to absolute ISO.
+
+After drafting, the document is **both displayed in chat and saved to disk** at `00_dev/handoffs/<YYYY_MM_DD>_<short-topic>_handoff_v<N>.md` under the canonical `carucci_r` OneDrive path.
 
 #### When to Use It
 
-- End-of-session wrap-up for a long / complex chat.
-- You want a clean first-message primer to paste into the next session.
-- Capturing decisions, rejected options, and the single best resume point
-  before context is lost.
-- Trigger phrases: `handoff`, `continuity`, `next session`, `wrap up`,
-  `summarize for next chat`, `I'm done for today`, `closing out`.
+- User says "handoff", "continuity", "next session", "wrap up", "summarize for next chat", or asks for a session primer.
+- Explicit end-of-session signals: "I'm done for today", "closing out".
+- Any time the user wants a paste-able context block to start a fresh chat without losing state.
 
 #### How to Use
 
-```text
+```
 /session-handoff
 ```
 
-No arguments. The skill reviews the **entire current conversation** and emits
-one Markdown document; paste the whole document as the first message of the
-next session.
+No arguments. The skill consumes the conversation transcript directly.
 
 #### Output
 
-A single Markdown document containing:
-
-- Plain `## OPENING PROMPT — PASTE AS FIRST MESSAGE` heading (not inside the blockquote).
-- A GFM blockquote with Role / Active domains / Tech stack / Audience /
-  Behavioral directives.
-- One horizontal rule.
-- HANDOFF BODY sections (SESSION METADATA is always present; omit subsections
-  with nothing to report, but never omit ARTIFACTS — emit
-  `No artifacts this session.` instead).
+- **In chat:** the full two-part Markdown document, ready to paste into the next session.
+- **On disk:** `C:\Users\carucci_r\OneDrive - City of Hackensack\00_dev\handoffs\<YYYY_MM_DD>_<short-topic>_handoff_v<N>.md` (chat copy and disk copy are identical; a `Saved: <path>` line is appended after the document).
+- **On write failure:** a `Save failed: <reason>` line appears below the document and the chat copy still serves as the paste source — the archival copy is never silently dropped.
 
 #### Gotchas
 
-- **Evidence-only tech stack.** Do not infer from CLAUDE.md, repo state, or
-  general knowledge unless the user pasted that material into this chat.
-- **Badge pinning.** `#261` must appear in exactly 2 places in SKILL.md
-  (task header + blockquote Role line). A third occurrence, or any `#241` /
-  similar, is a regression.
-- **Conflict resolution first.** The skill scans for contradictory
-  instructions before writing; use the latest stated position and flag
-  lingering conflicts with ⚠️. Never silently reconcile.
-- **PII pass.** Passwords / API keys / connection strings →`[REDACTED]`;
-  case numbers / badges / subject-identifying detail →`[REVIEW BEFORE SHARING]`;
-  internal hosts / IPs →`[REVIEW BEFORE SHARING]`. Flagged, never silently deleted.
-- **One-item NEXT BEST ACTION.** No sub-bullets, no secondary suggestions. If
-  multiple actions are critical, demote the rest to OPEN QUESTIONS / BLOCKERS.
-- **Trivial / empty conversation.** Say so in PROJECT / TASK in one line and
-  omit every other subsection (SESSION METADATA still emits).
+- **Do NOT restate CLAUDE.md defaults** in the OPENING PROMPT (output-first, mentor approach, etc.). Next session loads CLAUDE.md automatically; restating is noise. Only capture **session-specific deviations** from those defaults.
+- **Anti-inference rules** — for tech stack and ARTIFACTS, list ONLY items explicitly mentioned in this conversation. Do not infer from CLAUDE.md, repo structure, or general knowledge.
+- **Versioning** — first handoff in a conversation is `v1`. If a prior handoff already appears in the same conversation (look for `## OPENING PROMPT — PASTE AS FIRST MESSAGE`), bump to `v2` and cover only the delta since the prior version (do not regenerate unchanged context).
+- **Word ceiling** — `≤900 words` standard, `≤1,400` absolute. If over limit, compress CRITICAL CONTEXT and STATUS prose first; never truncate ARTIFACTS or NEXT BEST ACTION.
+- **Single NEXT BEST ACTION** — exactly one item; secondary actions go under OPEN QUESTIONS / BLOCKERS.
+- **PII / credential safety** — passwords/keys/connection strings → `[REDACTED]`; case numbers / badge numbers / internal hosts → `[REVIEW BEFORE SHARING]`. Flag rather than silently delete.
+- **Path rule** — always write under `carucci_r` (canonical), never under the underlying laptop profile name.
 
 ---
 
